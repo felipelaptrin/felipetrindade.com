@@ -1,4 +1,4 @@
-import { s3, acm, cloudfront } from '@pulumi/aws'
+import { s3, acm, cloudfront, route53 } from '@pulumi/aws'
 import { accountId } from "./commons"
 import { interpolate } from '@pulumi/pulumi'
 
@@ -41,6 +41,7 @@ export class Frontend {
         originAccessControlId: originAccessControl.id,
         originId: "s3OriginId",
       }],
+      priceClass: "PriceClass_All",
       defaultCacheBehavior: {
         allowedMethods: [
           "DELETE",
@@ -62,16 +63,20 @@ export class Frontend {
       restrictions: {
         geoRestriction: {
           restrictionType: "none",
-          locations: []
+          locations: [],
         }
       },
       viewerCertificate: {
         cloudfrontDefaultCertificate: false,
         acmCertificateArn: certificate.arn,
         sslSupportMethod: "sni-only",
+        minimumProtocolVersion: "TLSv1.2_2021",
       },
       defaultRootObject: "index.html",
-      aliases: [`test.${props.domainName}`],
+      aliases: [
+        props.domainName,
+        `www.${props.domainName}`
+      ],
     })
 
     const bucketPolicyDocument = interpolate`{
@@ -97,6 +102,33 @@ export class Frontend {
     new s3.BucketPolicy(`${id}-bucket-policy`, {
       bucket: bucket.id,
       policy: bucketPolicyDocument,
+    })
+
+    const zone = route53.getZone({
+      name: props.domainName
+    })
+    const zoneId = zone.then(zone => zone.zoneId)
+
+    new route53.Record(`${id}-record`, {
+      zoneId: zoneId,
+      name: props.domainName,
+      type: "A",
+      aliases: [{
+        name: distribution.domainName,
+        zoneId: distribution.hostedZoneId,
+        evaluateTargetHealth: false
+      }]
+    })
+
+    new route53.Record(`${id}-record-www`, {
+      zoneId: zoneId,
+      name: `www.${props.domainName}`,
+      type: "A",
+      aliases: [{
+        name: distribution.domainName,
+        zoneId: distribution.hostedZoneId,
+        evaluateTargetHealth: false
+      }]
     })
 
   }
