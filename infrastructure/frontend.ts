@@ -1,6 +1,7 @@
 import { s3, acm, cloudfront, route53 } from '@pulumi/aws'
-import { accountId } from "./commons"
 import { interpolate } from '@pulumi/pulumi'
+
+import { accountId } from "./commons"
 
 export interface IFrontend {
   domainName: string
@@ -8,36 +9,58 @@ export interface IFrontend {
 
 
 export class Frontend {
+  id: string
+  props: IFrontend
+  certificate: acm.Certificate
+  distribution: cloudfront.Distribution
+  bucket: s3.Bucket
 
   constructor(id: string, props: IFrontend) {
+    this.id = id
+    this.props = props
+    this.certificate = this.getCertificate()
+    this.bucket = this.getS3Bucket()
+    this.distribution = this.getDistribution()
 
+    this.setBucketPolicy()
+    this.setRoute53()
+  }
 
-    const certificate = new acm.Certificate(`${id}-certificate`, {
-      domainName: `${props.domainName}`,
+  getCertificate(): acm.Certificate {
+    const certificate = new acm.Certificate(`${this.id}-certificate`, {
+      domainName: `${this.props.domainName}`,
       subjectAlternativeNames: [
-        `*.${props.domainName}`
+        this.props.domainName,
+        `*.${this.props.domainName}`,
       ],
       validationMethod: "DNS"
     })
 
-    const originAccessControl = new cloudfront.OriginAccessControl(`${id}-origin-access-control`, {
-      originAccessControlOriginType: "s3",
-      signingBehavior: "always",
-      signingProtocol: "sigv4"
-    })
+    return certificate
+  }
 
-    const bucket = new s3.Bucket(`${id}-bucket`, {
+  getS3Bucket(): s3.Bucket {
+    const bucket = new s3.Bucket(`${this.id}-bucket`, {
       website: {
         indexDocument: "index.html",
         errorDocument: "index.html",
       },
     })
 
-    const distribution = new cloudfront.Distribution(`${id}-cloudfront-distribution`, {
+    return bucket
+  }
+
+  getDistribution(): cloudfront.Distribution {
+    const originAccessControl = new cloudfront.OriginAccessControl(`${this.id}-origin-access-control`, {
+      originAccessControlOriginType: "s3",
+      signingBehavior: "always",
+      signingProtocol: "sigv4"
+    })
+    const distribution = new cloudfront.Distribution(`${this.id}-cloudfront-distribution`, {
       enabled: true,
       comment: "Cloudfront distribution of my personal website and blog",
       origins: [{
-        domainName: bucket.bucketRegionalDomainName,
+        domainName: this.bucket.bucketRegionalDomainName,
         originAccessControlId: originAccessControl.id,
         originId: "s3OriginId",
       }],
@@ -68,17 +91,21 @@ export class Frontend {
       },
       viewerCertificate: {
         cloudfrontDefaultCertificate: false,
-        acmCertificateArn: certificate.arn,
+        acmCertificateArn: this.certificate.arn,
         sslSupportMethod: "sni-only",
         minimumProtocolVersion: "TLSv1.2_2021",
       },
       defaultRootObject: "index.html",
       aliases: [
-        props.domainName,
-        `www.${props.domainName}`
+        this.props.domainName,
+        `www.${this.props.domainName}`
       ],
     })
 
+    return distribution
+  }
+
+  setBucketPolicy(): void {
     const bucketPolicyDocument = interpolate`{
       "Version": "2008-10-17",
       "Id": "PolicyForCloudFrontPrivateContent",
@@ -90,46 +117,46 @@ export class Frontend {
             "Service": "cloudfront.amazonaws.com"
           },
           "Action": "s3:GetObject",
-          "Resource": "${bucket.arn}/*",
+          "Resource": "${this.bucket.arn}/*",
           "Condition": {
             "StringEquals": {
-              "AWS:SourceArn": "arn:aws:cloudfront::${accountId}:distribution/${distribution.id}"
+              "AWS:SourceArn": "arn:aws:cloudfront::${accountId}:distribution/${this.distribution.id}"
             }
           }
         }
       ]}`
-
-    new s3.BucketPolicy(`${id}-bucket-policy`, {
-      bucket: bucket.id,
+    new s3.BucketPolicy(`${this.id}-bucket-policy`, {
+      bucket: this.bucket.id,
       policy: bucketPolicyDocument,
     })
+  }
 
+  setRoute53(): void {
     const zone = route53.getZone({
-      name: props.domainName
+      name: this.props.domainName
     })
     const zoneId = zone.then(zone => zone.zoneId)
 
-    new route53.Record(`${id}-record`, {
+    new route53.Record(`${this.id}-record`, {
       zoneId: zoneId,
-      name: props.domainName,
+      name: this.props.domainName,
       type: "A",
       aliases: [{
-        name: distribution.domainName,
-        zoneId: distribution.hostedZoneId,
+        name: this.distribution.domainName,
+        zoneId: this.distribution.hostedZoneId,
         evaluateTargetHealth: false
       }]
     })
 
-    new route53.Record(`${id}-record-www`, {
+    new route53.Record(`${this.id}-record-www`, {
       zoneId: zoneId,
-      name: `www.${props.domainName}`,
+      name: `www.${this.props.domainName}`,
       type: "A",
       aliases: [{
-        name: distribution.domainName,
-        zoneId: distribution.hostedZoneId,
+        name: this.distribution.domainName,
+        zoneId: this.distribution.hostedZoneId,
         evaluateTargetHealth: false
       }]
     })
-
   }
 }
