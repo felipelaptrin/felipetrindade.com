@@ -1,0 +1,55 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+
+jobs:
+  infra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Assume Role via OIDC
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ vars.IAM_ROLE_ARN_OIDC_GITHUB }}
+          role-session-name: Github-Actions
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21.6.1
+
+      - name: Install node dependencies
+        working-directory: infrastructure
+        run: npm install
+
+      - name: Pulumi installation
+        run: |
+          curl -fsSL https://get.pulumi.com | sh
+          export PATH=$PATH:/root/.pulumi/bin
+
+      - name: Pulumi Login using S3 as backend
+        run: pulumi login ${{ vars.PULUMI_BACKEND_S3_BUCKET }}
+
+      - name: Pulumi Preview
+        working-directory: infrastructure
+        run: pulumi preview --diff --refresh -s stack
+        env:
+          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
+
+      - name: Pulumi Deploy
+        if: github.ref == 'refs/heads/main'
+        working-directory: infrastructure
+        run: pulumi up --yes --refresh -s stack
+        env:
+          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
