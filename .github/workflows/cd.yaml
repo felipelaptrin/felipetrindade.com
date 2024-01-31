@@ -33,8 +33,10 @@ jobs:
         run: pulumi login ${{ vars.PULUMI_BACKEND_S3_BUCKET }}
 
       - name: Pulumi Preview
+        working-directory: infrastructure
         run: pulumi preview --diff --refresh
 
       - name: Pulumi Deploy
         if: github.ref == 'refs/heads/main'
+        working-directory: infrastructure
         run: pulumi up --yes --refresh
