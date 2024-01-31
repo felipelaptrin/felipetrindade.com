@@ -25,8 +25,9 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Setup Node
-        with: actions/setup-node@v4
-        node-version: 21.6.1
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21.6.1
 
       - name: Install node dependencies
         run: npm install
