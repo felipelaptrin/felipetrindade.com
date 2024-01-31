@@ -33,7 +33,7 @@ jobs:
         run: pulumi login ${{ vars.PULUMI_BACKEND_S3_BUCKET }}
 
       - name: Pulumi select stack
-        run: pulumi stack select -s website/stack
+        run: pulumi stack select -s organization/website/stack
 
       - name: Pulumi Preview
         working-directory: infrastructure
