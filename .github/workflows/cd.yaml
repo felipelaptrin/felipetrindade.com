@@ -35,8 +35,12 @@ jobs:
       - name: Pulumi Preview
         working-directory: infrastructure
         run: pulumi preview --diff --refresh -s stack
+        env:
+          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
 
       - name: Pulumi Deploy
         if: github.ref == 'refs/heads/main'
         working-directory: infrastructure
-        run: pulumi up --yes --refresh
+        run: pulumi up --yes --refresh -s stack
+        env:
+          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
