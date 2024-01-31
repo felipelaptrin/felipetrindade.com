@@ -1,0 +1,6 @@
+encryptionsalt: v1:r9cbLJT+fFI=:v1:bbOH5q0vAp5ZKZBe:tCvOKEezYBj3dzDarorHK5HrpD2zpQ==
+config:
+  aws:defaultTags:
+    tags:
+      Pulumi: "true"
+      repo: "github.com/felipelaptrin/felipetrindade.com"
