@@ -1,3 +1,7 @@
+# Node
+/bin/
+/node_modules/
+
 # Vs Code
 .vscode
 
