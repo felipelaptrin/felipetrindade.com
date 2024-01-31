@@ -30,6 +30,7 @@ jobs:
           node-version: 21.6.1
 
       - name: Install node dependencies
+        working-directory: infrastructure
         run: npm install
 
       - name: Pulumi installation
