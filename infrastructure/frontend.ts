@@ -14,10 +14,12 @@ export class Frontend {
   certificate: acm.Certificate
   distribution: cloudfront.Distribution
   bucket: s3.Bucket
+  zoneId: Promise<string>
 
   constructor(id: string, props: IFrontend) {
     this.id = id
     this.props = props
+    this.zoneId = this.getZone()
     this.certificate = this.getCertificate()
     this.bucket = this.getS3Bucket()
     this.distribution = this.getDistribution()
@@ -34,6 +36,17 @@ export class Frontend {
         `*.${this.props.domainName}`,
       ],
       validationMethod: "DNS"
+    })
+    const certificateValidation = new route53.Record(`${this.id}-certificate`, {
+      zoneId: this.zoneId,
+      name: certificate.domainValidationOptions[0].resourceRecordName,
+      records: [certificate.domainValidationOptions[0].resourceRecordValue],
+      type: certificate.domainValidationOptions[0].resourceRecordType,
+      ttl: 60
+    })
+    new acm.CertificateValidation(`${this.id}-certificate-validation`, {
+      certificateArn: certificate.arn,
+      validationRecordFqdns: [certificateValidation.fqdn]
     })
 
     return certificate
@@ -131,14 +144,18 @@ export class Frontend {
     })
   }
 
-  setRoute53(): void {
+  getZone(): Promise<string> {
     const zone = route53.getZone({
       name: this.props.domainName
     })
     const zoneId = zone.then(zone => zone.zoneId)
 
+    return zoneId
+  }
+
+  setRoute53(): void {
     new route53.Record(`${this.id}-record`, {
-      zoneId: zoneId,
+      zoneId: this.zoneId,
       name: this.props.domainName,
       type: "A",
       aliases: [{
@@ -149,7 +166,7 @@ export class Frontend {
     })
 
     new route53.Record(`${this.id}-record-www`, {
-      zoneId: zoneId,
+      zoneId: this.zoneId,
       name: `www.${this.props.domainName}`,
       type: "A",
       aliases: [{
