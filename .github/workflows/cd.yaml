@@ -32,12 +32,9 @@ jobs:
       - name: Pulumi Login using S3 as backend
         run: pulumi login ${{ vars.PULUMI_BACKEND_S3_BUCKET }}
 
-      - name: Pulumi select stack
-        run: pulumi stack select -s organization/website/stack
-
       - name: Pulumi Preview
         working-directory: infrastructure
-        run: pulumi preview --diff --refresh
+        run: pulumi preview --diff --refresh -s stack
 
       - name: Pulumi Deploy
         if: github.ref == 'refs/heads/main'
