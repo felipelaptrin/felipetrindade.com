@@ -13,6 +13,12 @@ permissions:
 jobs:
   infra:
     runs-on: ubuntu-latest
+    outputs:
+      frontend-bucket: ${{ steps.frontend-bucket.outputs.s3 }}
+      cloudfront-distribution: ${{ steps.cloudfront-distribution.outputs.cloudfront }}
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,12 +50,65 @@ jobs:
       - name: Pulumi Preview
         working-directory: infrastructure
         run: pulumi preview --diff --refresh -s stack
-        env:
-          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
+
+      - name: Get Frontend S3 Bucket
+        id: frontend-bucket
+        working-directory: infrastructure
+        run: |
+          OUTPUT=$(pulumi stack output frontendS3Bucket -s stack)
+          echo "s3=$OUTPUT" >> "$GITHUB_OUTPUT"
+
+      - name: Get CloudFront Distribution ID
+        id: cloudfront-distribution
+        working-directory: infrastructure
+        run: |
+          OUTPUT=$(pulumi stack output cloudfrontDistribution -s stack)
+          echo "cloudfront=$OUTPUT" >> "$GITHUB_OUTPUT"
 
       - name: Pulumi Deploy
         if: github.ref == 'refs/heads/main'
         working-directory: infrastructure
         run: pulumi up --yes --refresh -s stack
-        env:
-          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
+
+  frontend:
+    runs-on: ubuntu-latest
+    needs: infra
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Assume Role via OIDC
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ vars.IAM_ROLE_ARN_OIDC_GITHUB }}
+          role-session-name: Github-Actions
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21.6.1
+
+      - name: Install node dependencies
+        working-directory: frontend
+        run: |
+          npm install
+          npm install -g gatsby-cli
+
+      - name: Build website
+        working-directory: frontend
+        run: gatsby build
+
+      - name: Push assets to S3
+        if: github.ref == 'refs/heads/main'
+        working-directory: frontend/public
+        run: |
+          S3=s3://{{ needs.infra.outputs.frontend-bucket }}
+          aws s3 sync . $S3
+
+      - name: Invalidate CloudFront Cache
+        if: github.ref == 'refs/heads/main'
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ needs.infra.outputs.cloudfront-distribution }} \
+            --paths "/*"

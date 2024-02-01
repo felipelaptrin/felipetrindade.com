@@ -3,4 +3,8 @@ import { frontendConfig, githubOidcConfig } from "./config"
 import { GitHubOidc } from "./oidc"
 
 new GitHubOidc("oidc", githubOidcConfig)
-new Frontend("frontend", frontendConfig)
+const frontend = new Frontend("frontend", frontendConfig)
+
+// Export - Slack Outputs - Used during CI
+export const cloudfrontDistribution = frontend.distribution.id
+export const frontendS3Bucket = frontend.bucket.bucket
