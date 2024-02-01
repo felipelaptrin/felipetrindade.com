@@ -53,7 +53,7 @@ jobs:
       - name: Get Frontend S3 Bucket
         id: frontend-bucket
         run: |
-          OUTPUT=$(pulumi stack output frontendS3Bucket)
+          OUTPUT=$(pulumi stack output frontendS3Bucket -s stack)
           echo "s3=$OUTPUT" >> "$GITHUB_OUTPUT"
         env:
           PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
@@ -61,7 +61,7 @@ jobs:
       - name: Get CloudFront Distribution ID
         id: cloudfront-distribution
         run: |
-          OUTPUT=$(pulumi stack output cloudfrontDistribution)
+          OUTPUT=$(pulumi stack output cloudfrontDistribution -s stack)
           echo "cloudfront=$OUTPUT" >> "$GITHUB_OUTPUT"
         env:
           PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
