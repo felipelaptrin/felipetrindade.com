@@ -53,12 +53,14 @@ jobs:
 
       - name: Get Frontend S3 Bucket
         id: frontend-bucket
+        working-directory: infrastructure
         run: |
           OUTPUT=$(pulumi stack output frontendS3Bucket -s stack)
           echo "s3=$OUTPUT" >> "$GITHUB_OUTPUT"
 
       - name: Get CloudFront Distribution ID
         id: cloudfront-distribution
+        working-directory: infrastructure
         run: |
           OUTPUT=$(pulumi stack output cloudfrontDistribution -s stack)
           echo "cloudfront=$OUTPUT" >> "$GITHUB_OUTPUT"
