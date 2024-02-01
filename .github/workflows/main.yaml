@@ -44,31 +44,36 @@ jobs:
           curl -fsSL https://get.pulumi.com | sh
           export PATH=$PATH:/root/.pulumi/bin
 
+      - name: Setup Pulumi Stack
+        run: pulumi stack select stack --create --secrets-provider=passphrase
+
       - name: Pulumi Login using S3 as backend
         run: pulumi login ${{ vars.PULUMI_BACKEND_S3_BUCKET }}
 
       - name: Pulumi Preview
         working-directory: infrastructure
-        run: pulumi preview --diff --refresh -s stack
-
-      - name: Get Frontend S3 Bucket
-        id: frontend-bucket
-        working-directory: infrastructure
-        run: |
-          OUTPUT=$(pulumi stack output frontendS3Bucket -s stack)
-          echo "s3=$OUTPUT" >> "$GITHUB_OUTPUT"
-
-      - name: Get CloudFront Distribution ID
-        id: cloudfront-distribution
-        working-directory: infrastructure
-        run: |
-          OUTPUT=$(pulumi stack output cloudfrontDistribution -s stack)
-          echo "cloudfront=$OUTPUT" >> "$GITHUB_OUTPUT"
+        run: pulumi preview --diff --refresh
 
       - name: Pulumi Deploy
         if: github.ref == 'refs/heads/main'
         working-directory: infrastructure
-        run: pulumi up --yes --refresh -s stack
+        run: pulumi up --yes --refresh
+
+      - name: Get Frontend S3 Bucket
+        if: github.ref == 'refs/heads/main'
+        id: frontend-bucket
+        working-directory: infrastructure
+        run: |
+          OUTPUT=$(pulumi stack output frontendS3Bucket)
+          echo "s3=$OUTPUT" >> "$GITHUB_OUTPUT"
+
+      - name: Get CloudFront Distribution ID
+        if: github.ref == 'refs/heads/main'
+        id: cloudfront-distribution
+        working-directory: infrastructure
+        run: |
+          OUTPUT=$(pulumi stack output cloudfrontDistribution)
+          echo "cloudfront=$OUTPUT" >> "$GITHUB_OUTPUT"
 
   frontend:
     runs-on: ubuntu-latest
