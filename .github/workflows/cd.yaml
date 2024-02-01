@@ -103,7 +103,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         working-directory: frontend/public
         run: |
-          S3=s3://{{ needs.infra.outputs.frontend-bucket }}
+          S3=s3://${{ needs.infra.outputs.frontend-bucket }}
           aws s3 sync . $S3
 
       - name: Invalidate CloudFront Cache
