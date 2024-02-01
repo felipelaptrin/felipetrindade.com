@@ -16,6 +16,9 @@ jobs:
     outputs:
       frontend-bucket: ${{ steps.frontend-bucket.outputs.s3 }}
       cloudfront-distribution: ${{ steps.cloudfront-distribution.outputs.cloudfront }}
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,31 +50,23 @@ jobs:
       - name: Pulumi Preview
         working-directory: infrastructure
         run: pulumi preview --diff --refresh -s stack
-        env:
-          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
 
       - name: Get Frontend S3 Bucket
         id: frontend-bucket
         run: |
           OUTPUT=$(pulumi stack output frontendS3Bucket -s stack)
           echo "s3=$OUTPUT" >> "$GITHUB_OUTPUT"
-        env:
-          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
 
       - name: Get CloudFront Distribution ID
         id: cloudfront-distribution
         run: |
           OUTPUT=$(pulumi stack output cloudfrontDistribution -s stack)
           echo "cloudfront=$OUTPUT" >> "$GITHUB_OUTPUT"
-        env:
-          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
 
       - name: Pulumi Deploy
         if: github.ref == 'refs/heads/main'
         working-directory: infrastructure
         run: pulumi up --yes --refresh -s stack
-        env:
-          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
 
   frontend:
     runs-on: ubuntu-latest
