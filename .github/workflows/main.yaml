@@ -47,24 +47,21 @@ jobs:
       - name: Pulumi Login using S3 as backend
         run: pulumi login ${{ vars.PULUMI_BACKEND_S3_BUCKET }}
 
-      - name: Setup Pulumi Stack
-        run: pulumi stack select stack
-
       - name: Pulumi Preview
         working-directory: infrastructure
-        run: pulumi preview --diff --refresh
+        run: pulumi preview --diff --refresh -s stack
 
       - name: Pulumi Deploy
         if: github.ref == 'refs/heads/main'
         working-directory: infrastructure
-        run: pulumi up --yes --refresh
+        run: pulumi up --yes --refresh -s stack
 
       - name: Get Frontend S3 Bucket
         if: github.ref == 'refs/heads/main'
         id: frontend-bucket
         working-directory: infrastructure
         run: |
-          OUTPUT=$(pulumi stack output frontendS3Bucket)
+          OUTPUT=$(pulumi stack output frontendS3Bucket -s stack)
           echo "s3=$OUTPUT" >> "$GITHUB_OUTPUT"
 
       - name: Get CloudFront Distribution ID
@@ -72,7 +69,7 @@ jobs:
         id: cloudfront-distribution
         working-directory: infrastructure
         run: |
-          OUTPUT=$(pulumi stack output cloudfrontDistribution)
+          OUTPUT=$(pulumi stack output cloudfrontDistribution -s stack)
           echo "cloudfront=$OUTPUT" >> "$GITHUB_OUTPUT"
 
   frontend:
