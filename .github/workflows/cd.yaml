@@ -100,19 +100,23 @@ jobs:
 
       - name: Install node dependencies
         working-directory: frontend
-        run: npm install
+        run: |
+          npm install
+          npm install -g gatsby-cli
 
       - name: Build website
         working-directory: frontend
         run: gatsby build
 
       - name: Push assets to S3
+        if: github.ref == 'refs/heads/main'
         working-directory: frontend/public
         run: |
           S3=s3://{{ needs.infra.outputs.frontend-bucket }}
           aws s3 sync . $S3
 
       - name: Invalidate CloudFront Cache
+        if: github.ref == 'refs/heads/main'
         run: |
           aws cloudfront create-invalidation \
             --distribution-id ${{ needs.infra.outputs.cloudfront-distribution }} \
