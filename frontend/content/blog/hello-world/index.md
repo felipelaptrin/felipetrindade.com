@@ -21,9 +21,7 @@ The *click* in your mind happened that you finally said: **I finally got it!**. 
 
 Although this experience is incredible I still feel it's a burden to go through it. Wouldn't it be better if a good article existed and spared you all the pain of learning/understanding what you wanted?
 
-
-This. This is my real motivation. To write easy-to-understand guides/articles, simplify hard concepts and teach you all the way I think about several topics.
-
+This. This is my real motivation. To write easy-to-understand guides/articles, simplify hard concepts and teach people the way I think about several topics.
 
 ### The internet era and the lack of good content
 
