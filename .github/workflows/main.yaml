@@ -44,11 +44,11 @@ jobs:
           curl -fsSL https://get.pulumi.com | sh
           export PATH=$PATH:/root/.pulumi/bin
 
-      - name: Setup Pulumi Stack
-        run: pulumi stack select stack --create --secrets-provider=passphrase
-
       - name: Pulumi Login using S3 as backend
         run: pulumi login ${{ vars.PULUMI_BACKEND_S3_BUCKET }}
+
+      - name: Setup Pulumi Stack
+        run: pulumi stack select stack
 
       - name: Pulumi Preview
         working-directory: infrastructure
