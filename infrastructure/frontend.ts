@@ -73,7 +73,7 @@ export class Frontend {
       enabled: true,
       comment: "Cloudfront distribution of my personal website and blog",
       origins: [{
-        domainName: this.bucket.bucketRegionalDomainName,
+        domainName: this.bucket.websiteEndpoint,
         originAccessControlId: originAccessControl.id,
         originId: "s3OriginId",
       }],
