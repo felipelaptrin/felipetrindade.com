@@ -1,10 +1,12 @@
-import { s3, acm, cloudfront, route53 } from '@pulumi/aws'
-import { interpolate } from '@pulumi/pulumi'
+import * as archive from "@pulumi/archive";
+import { s3, acm, cloudfront, route53, lambda, iam, cloudwatch } from '@pulumi/aws'
+import { interpolate, asset } from '@pulumi/pulumi'
 
 import { accountId } from "./commons"
 
 export interface IFrontend {
   domainName: string
+  lambdaAtEdgeLogGroupRetention: number
 }
 
 
@@ -15,6 +17,7 @@ export class Frontend {
   distribution: cloudfront.Distribution
   bucket: s3.Bucket
   zoneId: Promise<string>
+  lambda: lambda.Function
 
   constructor(id: string, props: IFrontend) {
     this.id = id
@@ -22,6 +25,7 @@ export class Frontend {
     this.zoneId = this.getZone()
     this.certificate = this.getCertificate()
     this.bucket = this.getS3Bucket()
+    this.lambda = this.getLambdaAtEdge()
     this.distribution = this.getDistribution()
 
     this.setBucketPolicy()
@@ -73,7 +77,7 @@ export class Frontend {
       enabled: true,
       comment: "Cloudfront distribution of my personal website and blog",
       origins: [{
-        domainName: this.bucket.websiteEndpoint,
+        domainName: this.bucket.bucketRegionalDomainName,
         originAccessControlId: originAccessControl.id,
         originId: "s3OriginId",
       }],
@@ -95,6 +99,10 @@ export class Frontend {
         targetOriginId: "s3OriginId",
         viewerProtocolPolicy: "redirect-to-https",
         cachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6", // Managed-CachingOptimized
+        lambdaFunctionAssociations: [{
+          eventType: "viewer-request",
+          lambdaArn: this.lambda.qualifiedArn
+        }]
       },
       restrictions: {
         geoRestriction: {
@@ -175,5 +183,83 @@ export class Frontend {
         evaluateTargetHealth: false
       }]
     })
+  }
+
+  archiveLambdaCode(): string {
+    const archiveFile = "lambda_at_edge.zip"
+    archive.getFile({
+      type: "zip",
+      sourceFile: "lambda/index.js",
+      outputPath: archiveFile
+    })
+
+    return archiveFile
+  }
+
+  getLambdaAtEdge(): lambda.Function {
+    const archiveFile = this.archiveLambdaCode()
+    const trustRelationship = interpolate`{
+      "Version": "2012-10-17",
+      "Statement": [{
+        "Effect": "Allow",
+        "Principal": {
+          "Service": [
+            "lambda.amazonaws.com",
+            "edgelambda.amazonaws.com"
+        ]},
+        "Action": "sts:AssumeRole"
+      }]
+    }`
+
+    const role = new iam.Role(`${this.id}-lambda-at-edge`, {
+      assumeRolePolicy: trustRelationship,
+      managedPolicyArns: ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"],
+    })
+
+    const policy = new iam.Policy(`${this.id}-lambda-policy`, {
+      policy: interpolate`{
+        "Version": "2012-10-17",
+        "Statement": [{
+          "Sid": "VisualEditor0",
+          "Effect": "Allow",
+          "Action": ["s3:List", "s3:Get*"],
+          "Resource": [
+            "${this.bucket.arn}",
+            "${this.bucket.arn}/*"
+          ]
+        }]
+      }`
+    })
+    new iam.RolePolicyAttachment(`${this.id}-lambda-policy-attach`, {
+      role: role,
+      policyArn: policy.arn,
+    })
+
+    const logGroup = new cloudwatch.LogGroup(`${this.id}-lambda-at-edge-log-group`, {
+      retentionInDays: this.props.lambdaAtEdgeLogGroupRetention,
+    })
+
+    const lambda_function = new lambda.Function(`${this.id}`, {
+      description: "Runs at edge to add '/index.html' in every uri, allowing users to access paths",
+      role: role.arn,
+      code: new asset.FileArchive(archiveFile),
+      runtime: "nodejs20.x",
+      handler: "index.handler",
+      architectures: ["x86_64"],
+      publish: true,
+      loggingConfig: {
+        logGroup: logGroup.name,
+        logFormat: "Text"
+      }
+    })
+
+    new lambda.Permission(`${this.id}-lambda-permission`, {
+      action: "lambda:InvokeFunction",
+      statementId: "AllowExecutionFromCloudFront",
+      function: lambda_function,
+      principal: "edgelambda.amazonaws.com",
+    })
+
+    return lambda_function
   }
 }
