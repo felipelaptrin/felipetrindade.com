@@ -5,7 +5,7 @@ exports.handler = (event, context, callback) => {
 
   if (uri.endsWith('/')) {
     request.uri += 'index.html';
-  } else {
+  } else if (!uri.includes('.')) {
     request.uri += '/index.html';
   }
 
