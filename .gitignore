@@ -1,6 +1,3 @@
-# Pulumi
-infrastructure/*.zip
-
 # Node
 /bin/
 /node_modules/

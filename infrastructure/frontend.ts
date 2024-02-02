@@ -1,5 +1,5 @@
 import * as archive from "@pulumi/archive";
-import { s3, acm, cloudfront, route53, lambda, iam, cloudwatch } from '@pulumi/aws'
+import { s3, acm, cloudfront, route53, lambda, iam, cloudwatch, Provider } from '@pulumi/aws'
 import { interpolate, asset } from '@pulumi/pulumi'
 
 import { accountId } from "./commons"
@@ -18,6 +18,7 @@ export class Frontend {
   bucket: s3.Bucket
   zoneId: Promise<string>
   lambda: lambda.Function
+  provider: Provider
 
   constructor(id: string, props: IFrontend) {
     this.id = id
@@ -27,6 +28,7 @@ export class Frontend {
     this.bucket = this.getS3Bucket()
     this.lambda = this.getLambdaAtEdge()
     this.distribution = this.getDistribution()
+    this.provider = new Provider("us-east-1", { region: "us-east-1" })
 
     this.setBucketPolicy()
     this.setRoute53()
@@ -40,7 +42,7 @@ export class Frontend {
         `*.${this.props.domainName}`,
       ],
       validationMethod: "DNS"
-    })
+    }, { provider: this.provider })
     const certificateValidation = new route53.Record(`${this.id}-certificate`, {
       zoneId: this.zoneId,
       name: certificate.domainValidationOptions[0].resourceRecordName,
@@ -116,6 +118,17 @@ export class Frontend {
         sslSupportMethod: "sni-only",
         minimumProtocolVersion: "TLSv1.2_2021",
       },
+      customErrorResponses: [{
+        errorCode: 404,
+        responsePagePath: "/404.html",
+        responseCode: 404,
+        errorCachingMinTtl: 3600,
+      }, {
+        errorCode: 403,
+        responsePagePath: "/404.html",
+        responseCode: 404,
+        errorCachingMinTtl: 3600,
+      }],
       defaultRootObject: "index.html",
       aliases: [
         this.props.domainName,
@@ -186,7 +199,7 @@ export class Frontend {
   }
 
   archiveLambdaCode(): string {
-    const archiveFile = "lambda_at_edge.zip"
+    const archiveFile = "lambda/lambda_at_edge.zip"
     archive.getFile({
       type: "zip",
       sourceFile: "lambda/index.js",
@@ -211,11 +224,6 @@ export class Frontend {
       }]
     }`
 
-    const role = new iam.Role(`${this.id}-lambda-at-edge`, {
-      assumeRolePolicy: trustRelationship,
-      managedPolicyArns: ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"],
-    })
-
     const policy = new iam.Policy(`${this.id}-lambda-policy`, {
       policy: interpolate`{
         "Version": "2012-10-17",
@@ -230,9 +238,10 @@ export class Frontend {
         }]
       }`
     })
-    new iam.RolePolicyAttachment(`${this.id}-lambda-policy-attach`, {
-      role: role,
-      policyArn: policy.arn,
+
+    const role = new iam.Role(`${this.id}-lambda-at-edge`, {
+      assumeRolePolicy: trustRelationship,
+      managedPolicyArns: ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole", policy.arn],
     })
 
     const logGroup = new cloudwatch.LogGroup(`${this.id}-lambda-at-edge-log-group`, {
@@ -251,7 +260,7 @@ export class Frontend {
         logGroup: logGroup.name,
         logFormat: "Text"
       }
-    })
+    }, { provider: this.provider })
 
     new lambda.Permission(`${this.id}-lambda-permission`, {
       action: "lambda:InvokeFunction",
