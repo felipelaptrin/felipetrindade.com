@@ -10,7 +10,7 @@ In this post, I'll comment, discuss and deep-dive about how to deploy a static w
 ## Considerations regarding the tools used
 I've used some tools to help me deploy the static web application. To be honest, I think this is the less important part here, I could have used other tools to do the same job. The most important thing is to understand why the tool is being used, if you understand the reason you can replace it with another tool easily.
 
-- **CI/CD**: I've used GitHub Actions to perform the CI/CI workflow of the project for the infrastructure as code (IaC) and for the website (static web application). You could have used any continuous integration tool here, such as [Gitlab CI/CD](https://docs.gitlab.com/ee/ci/), [CircleCI](https://circleci.com/), [Jenkins](https://www.jenkins.io/)... I decided to use GitHub Actions to manage the CI/CD because it's already integrated with GitHub, the free tier is enough for my use case and it is a managed service (and I was not in the mood to self-manage and deploy an open source CICD tool). The workflow was performing the following tasks:
+- **CI/CD**: I've used GitHub Actions to perform the CI/CI workflow of the project for the infrastructure as code (IaC) and for the website (static web application). You could have used any continuous integration tool here, such as [GitLab CI/CD](https://docs.gitlab.com/ee/ci/), [CircleCI](https://circleci.com/), [Jenkins](https://www.jenkins.io/)... I decided to use GitHub Actions to manage the CI/CD because it's already integrated with GitHub, the free tier is enough for my use case and it is a managed service (and I was not in the mood to self-manage and deploy an open source CICD tool). The workflow was performing the following tasks:
   - **For the infrastructure**: Deploying the cloud resources used in the project, such as S3 bucket, CloudFront distribution, and Route53 records. Don't worry! I will cover all these services, just keep reading!
   - **For the web app**: Building the source code, generating the static files, pushing the static files to S3 and invalidating the CloudFront distribution.
 - **Infrastructure as Code**: All the cloud resources created could have been created manually in the console, but what is the point of it? This is not reproducible, difficult to document the changes, hard to keep track of the changes. I decided to use [Pulumi](https://www.pulumi.com/) to create the documentation. I chose Pulumi because I was curious to give it a try and be able to compare it with other IaC tools that I've used in other projects, such as [Terraform](https://www.terraform.io/)/[OpenTofu](https://opentofu.org/), [Terragrunt](https://terragrunt.gruntwork.io/), [AWS CDK](https://aws.amazon.com/pt/cdk/) and [SAM](https://aws.amazon.com/serverless/sam/).
@@ -86,6 +86,25 @@ The idea is to create an A record in your Route53 that points to a more friendly
 #### Access Control
 To allow CloudFront to authenticate with S3 as origin two ways can be used: Origin Access Control (OAC) and Origin Access Identity (OAI). The latest is the legacy method, so we will give preference to the OAC method. The main difference between OAC and OAI is that OAC enhances security (using short-term credentials behind the scenes) and allows you to use KMS with CloudFront and S3 bucket. Using OAC, we will allow the CloudFront distribution to access the S3 using authenticated requests as we want.
 
+#### Lambda@Edge
+CloudFront allows us to specify the default root object of our website, usually the `index.html`, but this only works on the root of the website (e.g. `https://www.felipetrindade.com` -> `https://www.felipetrindade.com/index.html`). [It does not work on any subdirectory level](https://aws.amazon.com/blogs/compute/implementing-default-directory-indexes-in-amazon-s3-backed-amazon-cloudfront-origins-using-lambdaedge/) (e.g. `https://www.felipetrindade.com/hello-world`).
+
+Let me be more specific here, if you access the root page of the website (e.g. `https://www.felipetrindade.com`) and click on any post it will work normally, let's say that you click on the `Hello, World!` post, you will see that the URL of the browser will be modified to `https://felipetrindade.com/hello-world`. But if you reload the page of the post or simply try to access it from a link (`https://www.felipetrindade.com/hello-world`) you will get a 403 Access Denied error. But if you add `index.html` at the end of the URL it is gonna work perfectly (`https://felipetrindade.com/hello-world/index.html`).
+
+The explanation for this problem is fairly simple. S3 authenticates with CloudFront using the OAC, sending requests to the S3 Rest API. The API does not allow redirection to the default index page. So when the user goes directly to a subpage (e.g. `https://felipetrindade.com/hello-world`) it will request to S3 an object with `hello-world` as the object key and this key does not exist, but the key `hello-world/index.html` exists! So that's why it is going to work if we add the `index.html` at the end of the URL.
+
+
+This behavior is such a TERRIBLE user experience and we don't want to deploy such a bad thing. Luckily CloudFront provides us something called [Lambda@Edge](https://docs.aws.amazon.com/lambda/latest/dg/lambda-edge.html). Basically, we are going to deploy Lambda Functions at edge locations and these Lambda functions can alter the response or request between the user and edge location or between edge location and request. So it can be used to do A/B testing, add headers, dynamically route based on headers/cookies/query strings and so on. You can set the Lambda to run in four types of events:
+
+- **Viewer request**: User request to edge location.
+- **Viewer response**: Edge location request to the user.
+- **Origin request**: Edge location request to origin.
+- **Origin response**: Origin request to edge location.
+
+![A diagram that explains Lambda@Edge events](./lambda-at-edge.png)
+
+In our use case, we want to modify the `Viewer Request`, since we want to modify the URI so the Edge Location can effectively retrieve the sub-page! We are going to implement that using NodeJS and it is as simple as 10 lines of code: get the URL from the events objects (JSON) and return the URL with `index.html` appended.
+
 ### Certificate Manager
 AWS Certificate Manager is the service responsible for provisioning the TLS certificates. So you don't need to go through the burden of purchasing/issuing the certificate, renewing and uploading it to the servers. It is a really handy service and the best part is that public certificates are free, so you don't pay extra for it.
 
@@ -107,15 +126,17 @@ We pay for the assets that we put in S3. The storage cost is barely zero, for re
 As we commented before, public certificates are free. 😄
 
 4) CloudFront
-The CloudFront always free tier is generous so if your website does not have much access you probably won't even pay a single penny on that. The always free tier offers you 1TB of data transfer out and 10 million HTTP/HTTPS requests each month and this is more than enough for a personal website with low access. But in case you are curious to know more about the [CloudFront pricing](https://aws.amazon.com/cloudfront/pricing/), here we go:
+The CloudFront always free tier is generous so if your website does not have much access you probably won't even pay a single penny on that. The always free tier offers you 1TB of data transfer out, 10 million HTTP/HTTPS requests each month and this is more than enough for a personal website with low access. But in case you are curious to know more about the [CloudFront pricing](https://aws.amazon.com/cloudfront/pricing/), here we go:
 
 - HTTP requests from users: from `$0.0075` to `$0.016` per 10,000 HTTP requests
 - HTTPS requests from users: from`$0.01` to `$0.022` per 10,000 HTTPS requests
 - Data Transfer from CloudFront to users: from `$0.085` to `$0.12` per GB transferred
 
-#### Total Cost
-In the end, you probably going to pay only for the Route53 public hosted zone. So the monthly cost for your project will be only `$0.50`!
+5) Lambda@Edge
+We are charged `$0.60` per 1 million requests and, since we are going to use a 128MB Lambda, `$0.00000625125` for every second used. So considering that the Lambda will run for 100ms per execution (usually it's way less), this means that 1 million executions of the Lambda will cost us `$1.23`. So cheap!
 
+#### Total Cost
+In the end, for a small project, you probably going to pay only for the Route53 public hosted zone. So the monthly cost for your project will be only `$0.50`!
 
 ## Infrastructure code
 
@@ -577,7 +598,7 @@ The following variables were set in the repository:
 - `IAM_ROLE_ARN_OIDC_GITHUB`: The IAM Role ARN of the role that Github will use to authenticate with AWS and perform the deployments in the account. Please notice that this can't be fetched from Pulumi outputs, since we need to have access to the Pulumi backend (in our case S3 bucket) to retrieve this information!
 
 And the following secret was set:
-- `PULUMI_CONFIG_PASSPHRASE`: Pulumi uses this password to protect and lock your configuration values and secrets. This will be commented soon.
+- `PULUMI_CONFIG_PASSPHRASE`: Pulumi uses this password to protect and lock your configuration values and secrets. This will be commented on soon.
 
 ## The chicken and egg problem
 I'm not sure if you noticed, but in this project, we faced the chicken and egg problem (actually two times!). If you didn't notice, let me explain these problems.
