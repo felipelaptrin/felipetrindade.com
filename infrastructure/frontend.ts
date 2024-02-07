@@ -1,18 +1,18 @@
 import * as archive from "@pulumi/archive";
 import { s3, acm, cloudfront, route53, lambda, iam, cloudwatch, Provider } from '@pulumi/aws'
 import { interpolate, asset } from '@pulumi/pulumi'
-
-import { accountId } from "./commons"
+import { ICommonProps } from "./commons"
 
 export interface IFrontend {
-  domainName: string
   lambdaAtEdgeLogGroupRetention: number
+  commonProps: ICommonProps
 }
 
 
 export class Frontend {
   id: string
   props: IFrontend
+  domainName: string
   certificate: acm.Certificate
   distribution: cloudfront.Distribution
   bucket: s3.Bucket
@@ -23,7 +23,8 @@ export class Frontend {
   constructor(id: string, props: IFrontend) {
     this.id = id
     this.props = props
-    this.zoneId = this.getZone()
+    this.zoneId = props.commonProps.zoneId
+    this.domainName = props.commonProps.domainName
     this.certificate = this.getCertificate()
     this.bucket = this.getS3Bucket()
     this.lambda = this.getLambdaAtEdge()
@@ -36,10 +37,10 @@ export class Frontend {
 
   getCertificate(): acm.Certificate {
     const certificate = new acm.Certificate(`${this.id}-certificate`, {
-      domainName: `${this.props.domainName}`,
+      domainName: `${this.domainName}`,
       subjectAlternativeNames: [
-        this.props.domainName,
-        `*.${this.props.domainName}`,
+        this.domainName,
+        `*.${this.domainName}`,
       ],
       validationMethod: "DNS"
     }, { provider: this.provider })
@@ -131,8 +132,8 @@ export class Frontend {
       }],
       defaultRootObject: "index.html",
       aliases: [
-        this.props.domainName,
-        `www.${this.props.domainName}`
+        this.domainName,
+        `www.${this.domainName}`
       ],
     })
 
@@ -154,7 +155,7 @@ export class Frontend {
           "Resource": "${this.bucket.arn}/*",
           "Condition": {
             "StringEquals": {
-              "AWS:SourceArn": "arn:aws:cloudfront::${accountId}:distribution/${this.distribution.id}"
+              "AWS:SourceArn": "arn:aws:cloudfront::${this.props.commonProps.accountId}:distribution/${this.distribution.id}"
             }
           }
         }
@@ -165,19 +166,12 @@ export class Frontend {
     })
   }
 
-  getZone(): Promise<string> {
-    const zone = route53.getZone({
-      name: this.props.domainName
-    })
-    const zoneId = zone.then(zone => zone.zoneId)
 
-    return zoneId
-  }
 
   setRoute53(): void {
     new route53.Record(`${this.id}-record`, {
       zoneId: this.zoneId,
-      name: this.props.domainName,
+      name: this.domainName,
       type: "A",
       aliases: [{
         name: this.distribution.domainName,
@@ -188,7 +182,7 @@ export class Frontend {
 
     new route53.Record(`${this.id}-record-www`, {
       zoneId: this.zoneId,
-      name: `www.${this.props.domainName}`,
+      name: `www.${this.domainName}`,
       type: "A",
       aliases: [{
         name: this.distribution.domainName,
@@ -199,10 +193,10 @@ export class Frontend {
   }
 
   archiveLambdaCode(): string {
-    const archiveFile = "lambda/lambda_at_edge.zip"
+    const archiveFile = "lambda/lambda-at-edge/lambda_at_edge.zip"
     archive.getFile({
       type: "zip",
-      sourceFile: "lambda/index.js",
+      sourceFile: "lambda/lambda-at-edge/index.js",
       outputPath: archiveFile
     })
 
