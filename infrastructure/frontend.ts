@@ -193,10 +193,10 @@ export class Frontend {
   }
 
   archiveLambdaCode(): string {
-    const archiveFile = "lambda/lambda-at-edge/lambda_at_edge.zip"
+    const archiveFile = "lambda/lambda_at_edge.zip"
     archive.getFile({
       type: "zip",
-      sourceFile: "lambda/lambda-at-edge/index.js",
+      sourceFile: "lambda/index.js",
       outputPath: archiveFile
     })
 
