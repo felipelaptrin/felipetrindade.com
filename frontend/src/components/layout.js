@@ -6,12 +6,24 @@ const Layout = ({ location, title, children }) => {
   const isRootPath = location.pathname === rootPath
   let header
 
+  const navbar = (
+    <nav>
+      <Link to="/" className="title">
+        {title}
+      </Link>
+      <ul className="nav-list">
+        <li>
+          <Link to="/about-me">About me</Link>
+        </li>
+        <li>
+          <Link to="/contact">Contact</Link>
+        </li>
+      </ul>
+    </nav>
+  )
+
   if (isRootPath) {
-    header = (
-      <h1 className="main-heading">
-        <Link to="/">{title}</Link>
-      </h1>
-    )
+    header = <div className="navbar">{navbar}</div>
   } else {
     header = (
       <Link className="header-link-home" to="/">
