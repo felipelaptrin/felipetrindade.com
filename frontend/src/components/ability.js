@@ -11,18 +11,12 @@ const Ability = ({ icon, title, description }) => {
   const imagePath = {
     "Infrastructure Management": "../../static/github.png",
     "Cloud Automation": "../../static/github.png",
-    "Deployment": "../../static/github.png",
+    Deployment: "../../static/github.png",
   }
   return (
     <div className="ability-container">
       <div className="ability-icon">
-        <img
-          src={icon}
-          alt="GitHub Logo"
-          width={50}
-          height={50}
-          quality={95}
-        />
+        <img src={icon} alt="GitHub Logo" width={50} height={50} quality={95} />
       </div>
       <div className="ability-text">
         <div className="ability-title">{title}</div>
