@@ -97,8 +97,17 @@ jobs:
           npm install
           npm install -g gatsby-cli
 
+      - name: Setup environment variables
+        working-directory: frontend
+        run: |
+          echo "EMAILJS_SERVICE_ID=${{ secrets.EMAILJS_SERVICE_ID }}" >> .env.production
+          echo "EMAILJS_TEMPLATE_ID=${{ secrets.EMAILJS_TEMPLATE_ID }}" >> .env.production
+          echo "EMAILJS_USER_ID=${{ secrets.EMAILJS_USER_ID }}" >> .env.production
+
       - name: Build website
         working-directory: frontend
+        env:
+          NODE_ENV: production
         run: gatsby build
 
       - name: Push assets to S3

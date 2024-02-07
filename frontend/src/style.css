@@ -56,7 +56,7 @@
   --color-primary: #FD971F;
   --color-text: #FFF;
   --color-text-light: #CCC;
-  --color-text-highlight: #E68885;
+  --color-text-highlight: #EDF080;
   --color-heading: #EDF080;
   --color-heading-black: #FFC600;
 }
@@ -260,6 +260,26 @@ table thead tr th {
   border-bottom: 1px solid var(--color-accent);
 }
 
+nav {
+  margin-inline: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-weight: var(--fontWeight-bold);
+  font-family: var(--font-heading);
+  font-size: var(--fontSize-2);
+}
+
+nav a {
+  text-decoration: none;
+}
+
+.nav-list {
+  display: flex;
+  gap: 16px;
+  list-style-type: none;
+}
+
 /* Link */
 
 a {
@@ -285,6 +305,11 @@ a:focus {
 
 .global-header {
   margin-bottom: var(--spacing-12);
+}
+
+.global-header a:hover {
+  margin-bottom: var(--spacing-12);
+  color: var(--color-heading-black);
 }
 
 .main-heading {
@@ -364,4 +389,111 @@ a:focus {
   ol {
     list-style-position: inside;
   }
+}
+
+/* Other */
+.social-media p {
+  text-align: center;
+}
+
+.social-media ul {
+  display: flex;
+  list-style-type: none;
+  justify-content: space-evenly;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+
+.contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.contact div {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 20px;
+  background-color: #1d2b47;
+  padding: 30px;
+  border-radius: 15px;
+}
+
+.contact input,
+textarea {
+  width: 100%;
+  height: 40px;
+  border: none;
+  outline: none;
+  padding-left: 25px;
+  font-weight: var(--fontWeight-normal);
+  font-family: var(--font-body);
+  font-size: var(--fontSize-1);
+  border-radius: 10px;
+}
+
+.contact textarea {
+  height: 180px;
+  padding-top: 10px;
+  padding-right: 20px;
+}
+
+.contact button {
+  width: 150px;
+  height: 35px;
+  border-radius: 10px;
+  background-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.hoverable-brightness {
+  transition: background-color 0.15s;
+}
+
+.hoverable-brightness:hover {
+  filter: brightness(1.25);
+}
+
+.ability-container {
+  display: flex;
+  padding: 10px;
+}
+
+.ability-icon {
+  display: flex;
+  padding: 10px 50px 10px 0px;
+  justify-content: center;
+  align-items: center;
+}
+
+.ability-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.ability-title {
+  font-weight: var(--fontWeight-bold);
+  font-size: var(--fontSize-1);
+  color: var(--color-heading);
+}
+
+.ability-description {
+  display: flex;
+  font-size: var(--fontSize-0);
+  flex-wrap: nowrap;
+}
+
+.tools {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.tools li {
+  list-style-type: none;
 }
