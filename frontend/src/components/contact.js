@@ -7,7 +7,7 @@
 
 import * as React from "react"
 import { useSendEmail } from "../hooks/email"
-import { ClipLoader } from "react-spinners"
+import { BeatLoader } from "react-spinners"
 
 const ContactModal = () => {
   const { sendEmail, isLoading, error } = useSendEmail()
@@ -47,7 +47,7 @@ const ContactModal = () => {
           >
             {isLoading ? (
               <p>
-                Sending <ClipLoader size="15" />{" "}
+                <BeatLoader className="loader" size="10" />
               </p>
             ) : (
               "Send Message"
