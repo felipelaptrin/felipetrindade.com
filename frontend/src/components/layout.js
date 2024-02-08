@@ -22,24 +22,16 @@ const Layout = ({ location, title, children }) => {
     </nav>
   )
 
-  if (isRootPath) {
-    header = <div className="navbar">{navbar}</div>
-  } else {
-    header = (
-      <Link className="header-link-home" to="/">
-        {title}
-      </Link>
-    )
-  }
+  header = <div className="navbar">{navbar}</div>
 
   return (
     <div className="global-wrapper" data-is-root-path={isRootPath}>
       <header className="global-header">{header}</header>
       <main>{children}</main>
       <footer>
-        © {new Date().getFullYear()}, Built with
+        © {new Date().getFullYear()}, Source code available on
         {` `}
-        <a href="https://www.gatsbyjs.com">Gatsby</a> and deployed in AWS
+        <a href="https://github.com/felipelaptrin/felipetrindade.com">GitHub</a>
       </footer>
     </div>
   )
