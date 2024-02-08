@@ -37,7 +37,7 @@ const AboutMe = ({ data, location }) => {
       <Ability
         icon="../cloud.png"
         title="Infrastructure Management"
-        description="Managing the creation and deletion of infrastructure in the Cloud in a declarative way using Terraform, Terragrunt"
+        description="Managing the creation and deletion of infrastructure in the Cloud in a declarative way"
       />
       <Ability
         icon="../gear.png"
