@@ -17,7 +17,7 @@ const AboutMe = ({ data, location }) => {
         I'm a DevOps/SRE/Cloud Engineer (whatever you want to call it!) who
         loves to work with DevOps, Cloud, Networks, Automation, Containers...
         I'm based in Brazil (GMT-3 timezone), currently working as a DevOps
-        Engineer for Loka, a top 1% AWS Advanced Consulting Partner for startus.
+        Engineer for Loka, a top 1% AWS Advanced Consulting Partner for start ups.
       </p>
       <p>
         Before working as a Cloud Engineer I was a Data Engineer working in the
