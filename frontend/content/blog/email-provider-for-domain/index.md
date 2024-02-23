@@ -149,5 +149,5 @@ I did that on my website, as you can check [here](https://felipetrindade.com/con
 ![A diagram explaining how the email forwarding happens.](./email-forward.png)
 
 
-## Cya
+## Cya!
 Hope you liked this post! Stay tuned for the following posts!
