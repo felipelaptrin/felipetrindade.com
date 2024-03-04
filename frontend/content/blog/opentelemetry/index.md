@@ -6,7 +6,7 @@ description: OpenTelemetry is the second most active CNCF project, surpassed onl
 
 OpenTelemetry (as known as OTel) is an open-source project (maintained by CNCF, the same foundation that maintains Kubernetes) that aims to help developers instrument their code in a more standardized way. This project is a merge of two other projects: [OpenTracing](https://opentracing.io/) and [OpenCensus](https://opencensus.io/). It provides several components, most notably:
 - **APIs and SDK**: per programming language for generating and emitting telemetry
-- **Collector**: a component that receives, processes and exports telemetry to the observability backend
+- **Collector**: a component that receives, processes and export telemetry to the observability backend
 - **OTLP**: a protocol for transmitting telemetry data
 
 This documentation was divided into the following parts (in order):
