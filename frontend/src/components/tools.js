@@ -8,11 +8,11 @@ const Tools = ({ tools }) => {
           <li>
             <a
               className="hoverable-brightness"
-              href="https://argoproj.github.io/cd/"
+              href={tool.link}
             >
               <img
                 src={tool.image}
-                alt="GitHub Logo"
+                alt={tool.alt}
                 width={80}
                 height={80}
                 quality={95}
