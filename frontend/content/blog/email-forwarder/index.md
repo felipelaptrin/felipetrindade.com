@@ -1,6 +1,6 @@
 ---
 title: Configuring an email forward to enhance your phone security in case of a robbery
-date: "2024-05-08T10:40:32.169Z"
+date: "2024-05-04T19:23:32.169Z"
 description: To have your main email logged in your phone might be a bad idea in case you get robbed, let's increase your security!
 ---
 
