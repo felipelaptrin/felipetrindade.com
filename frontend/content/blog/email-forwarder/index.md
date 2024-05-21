@@ -417,7 +417,7 @@ devbox shell
 2) Move to the `infrastructure` folder
 
 ```sh
-cv infrastructure
+cd infrastructure
 ```
 
 3) Install NodeJS dependencies
