@@ -1,6 +1,6 @@
 ---
 title: On-premise Kubernetes cluster management using Rancher and Terraform
-date: "2024-06-26T10:40:32.169Z"
+date: "2024-06-06T01:40:32.169Z"
 description: Let's use Rancher, Terraform and Vagrant to simulate an on-premise Kubernetes deployment!
 ---
 
