@@ -6,6 +6,10 @@ description: Some comments I would like to address about consistent deployments
 
 Recently I was part of a project that didn't have consistent deployments (infra and application-related). I'll go over some problems faced by the client and the proposed solution for that.
 
+If you would like to directly check the code used in this blog post, please check the following GitHub repositories:
+- [consistent-deployments-app](https://github.com/felipelaptrin/consistent-deployments-app-blog)
+- [consistent-deployments-infra](https://github.com/felipelaptrin/consistent-deployments-infra-blog)
+
 ## Deployment state
 The client had two repositories: one for infrastructure and another one for all the applications (Lambdas and Glue jobs). The CI/CD of the application repository was responsible for running tests, building the Docker image, pushing the image (latest tag) to the ECR of the environment, and updating Lambda code to use this new code version. The CI/CD of the infra repository was responsible for planning the changes and then deploying the changes to the infrastructure (Lambda, Glue jobs and other things).
 
@@ -741,10 +745,13 @@ Notice that this value is managed by the PR created by the application CI/CD!
 So, the final flow, based on this new proposed solution is:
 1) The application developer opens a PR on the application repository to add new features to the code
 2) Application PR is approved and merged
-3) Docker image is created and pushed to ECR (tagged based on git commit hash) on the assets account
+3) The Docker image is created and pushed to ECR (tagged based on git commit hash) on the assets account
 4) A pull request is created in the infrastructure repository to update `app_version` in the tfvars file to use the new image
 5) If no infra changes are required, the application team can approve the update of the new Lambda version, otherwise, the infra team add changes to this PR
 6) Infra PR is approved and merged
 7) Deploy to assets account to create ECR repository (requires manual approval)
 8) Deploy to the dev account to create a new Lambda version (requires manual approval)
 9) Deploy to prod account to create new Lambda version (requires manual approval)
+
+## Cya
+That's all! Hope this brought some insights for you about consistent deployments. Hope to see you in the next on the next post!
