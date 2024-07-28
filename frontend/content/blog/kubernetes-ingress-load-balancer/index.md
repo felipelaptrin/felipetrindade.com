@@ -196,7 +196,7 @@ Now, let's check if our application was correctly provisioned with a Load Balanc
 
 Now, let's check if we can access this service via Load Balancer external IP (`172.100.150.1`).
 
-![Screenshot of the browser accessing ip 172.100.150.1. The text says "Hello, from app-load-balancer"](app-load-balancer-access.ypng)
+![Screenshot of the browser accessing ip 172.100.150.1. The text says "Hello, from app-load-balancer"](app-load-balancer-access.png)
 
 ### Deploy application with Ingress
 
@@ -295,7 +295,7 @@ echo "$INGRESS_LB_IP app-ingress.local" | sudo tee -a /etc/hosts
 
 Now access `http://app-ingress.local`. Check if the application is accessible.
 
-![Screenshot of the browser accessing http://app-ingress.local/. The text says "Hello, from app-ingress"](app-ingress-access.ypng)
+![Screenshot of the browser accessing http://app-ingress.local/. The text says "Hello, from app-ingress"](app-ingress-access.png)
 
 If you are done with the demo just run the command below to destroy the Kubernetes cluster.
 
