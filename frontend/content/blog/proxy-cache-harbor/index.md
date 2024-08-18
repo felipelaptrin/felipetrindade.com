@@ -4,6 +4,8 @@ date: "2024-08-07T21:40:32.169Z"
 description: Let's implement a container image proxy cache using Harbor to increase pull speed and reduce pull frequency to Dockerhub to avoid hitting its rate pull limit
 ---
 
+You can check the [GitHub repository](https://github.com/felipelaptrin/image-proxy-cache-harbor) an access all the manifests used in this blog post.
+
 A common problem when dealing with highly dynamic and/or big Kubernetes cluster is facing pull limits from Dockerhub. The [pull rate limits](https://docs.docker.com/docker-hub/download-rate-limit/) are:
 - 100 pulls per 6 hours per IP (for unauthenticated users)
 - 200 pulls per 6 hours (for authenticated users)
