@@ -1,6 +1,6 @@
 ---
 title: Using IaC to configure private resources
-date: "2024-08-19T15:40:32.169Z"
+date: "2024-08-18T13:44:32.169Z"
 description: Let's use Terraform to configure resources within a private network that are not publicly exposed
 ---
 
@@ -438,11 +438,11 @@ runs:
 
 Notice that several env vars are required to fully plan/run Opentofu:
 - `VULTR_API_KEY`: [Required](https://registry.terraform.io/providers/vultr/vultr/latest/docs) to authenticate with Vultr Cloud. This API Key is safely stored in the GitHub Secrets of the repository.
-- `AWS_ACCESS_KEY` and `AWS_SECRET_ACCESS_KEY`: I didn't paste the [backend.tf](https://github.com/felipelaptrin/iac-private-resources/blob/main/self-hosted/backend.tf) code because it's not relevant to the post, but I've configured a Vultr Object Storage (similar to S3) to store the state of Opentofu and these environment variables are [required](https://docs.vultr.com/how-to-store-terraform-state-in-vultr-object-storage). This keys are safely stored in the GitHub Secrets of the repository.
+- `AWS_ACCESS_KEY` and `AWS_SECRET_ACCESS_KEY`: I didn't paste the [backend.tf](https://github.com/felipelaptrin/iac-private-resources/blob/main/self-hosted/backend.tf) code because it's not relevant to the post, but I've configured a Vultr Object Storage (similar to S3) to store the state of Opentofu and these environment variables are [required](https://docs.vultr.com/how-to-store-terraform-state-in-vultr-object-storage). These keys are safely stored in the GitHub Secrets of the repository.
 - `GITHUB_TOKEN`: Notice that in the plan action, I'm using two different values for this environment value. The first one is [automatically](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication) created by GitHub and it's being used to use GitHub Bot to commit the dependency lock files of Opentofu. The second value is my GitHub PAT token (Personal Access Token) that is being used to get the token to register the self-hosted runner (check the `data.tf` file of the self-hosted manifests). This PAT token is safely stored in the GitHub Secrets of the repository.
-- `SSH_PRIVATE_KEY`: This is the private SSH key that can be used to connect to the bastion host and self-hosted runer. The latter is necessary only in case of debug, since all the self-runner configuration is being done in the user_data script.
+- `SSH_PRIVATE_KEY`: This is the private SSH key that can be used to connect to the bastion host and self-hosted runer. The latter is necessary only in case of debugging since all the self-runner configuration is being done in the user_data script.
 
-Now, let's chack how the workflow looks like
+Now, let's check how the workflow looks like
 
 ```yaml
 # .github/workflows/main.yaml
