@@ -148,6 +148,7 @@ I did that on my website, as you can check [here](https://felipetrindade.com/con
 
 ![A diagram explaining how the email forwarding happens.](./email-forward.png)
 
+PS: Recently Zoho announced that POP/IMAP will only be available on the paid plan ($1 month).
 
 ## Cya!
 Hope you liked this post! Stay tuned for the following posts!
