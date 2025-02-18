@@ -101,26 +101,26 @@ Let's define the providers (AWS) that we will use in your terraform code. Notice
 ```hcl
 # providers.tf
 provider "aws" {
- region = var.aws_region
+  region = var.aws_region
 
- default_tags {
- tags = {
- Project    = "Serverless Infra"
- Repository = "https://github.com/felipelaptrin/serverless-infra-blog"
- }
- }
+  default_tags {
+    tags = {
+      Project    = "Serverless Infra"
+      Repository = "https://github.com/felipelaptrin/serverless-infra-blog"
+    }
+  }
 }
 
 provider "aws" {
- alias  = "us_east_1"
- region = "us-east-1"
+  alias  = "us_east_1"
+  region = "us-east-1"
 
- default_tags {
- tags = {
- Project    = "Serverless Infra"
- Repository = "https://github.com/felipelaptrin/serverless-infra-blog"
- }
- }
+  default_tags {
+    tags = {
+      Project    = "Serverless Infra"
+      Repository = "https://github.com/felipelaptrin/serverless-infra-blog"
+    }
+  }
 }
 ```
 
@@ -132,125 +132,125 @@ Below, I declared all the variables that will be used, notice that only two vari
 ##### GENERAL
 ########################################
 variable "aws_region" {
- type        = string
- description = "AWS region to deploy the infrastructure"
- default     = "us-east-1"
+  type        = string
+  description = "AWS region to deploy the infrastructure"
+  default     = "us-east-1"
 }
 
 variable "domain" {
- type        = string
- description = "The domain of your project"
+  type        = string
+  description = "The domain of your project"
 }
 
 variable "logs_retention" {
- type        = number
- description = "CloudWatch Group log retention"
- default     = 90
+  type        = number
+  description = "CloudWatch Group log retention"
+  default     = 90
 }
 
 ########################################
 ##### NETWORKING
 ########################################
 variable "vpc_deploy" {
- type        = bool
- description = "Controls the deployment of the VPC resources (VPC, Subnets, Internet Gateway, Route Table...). If you already have a VPC deployed, set this variable to false and set 'vpc_id' variable."
- default     = true
+  type        = bool
+  description = "Controls the deployment of the VPC resources (VPC, Subnets, Internet Gateway, Route Table...). If you already have a VPC deployed, set this variable to false and set 'vpc_id' variable."
+  default     = true
 }
 
 variable "vpc_id" {
- type        = string
- description = "VPC ID of the already deployed VPC in your account. To use this, set vpc_deploy to false."
- default     = ""
+  type        = string
+  description = "VPC ID of the already deployed VPC in your account. To use this, set vpc_deploy to false."
+  default     = ""
 }
 
 variable "vpc_name" {
- type        = string
- description = "Name of the VPC to deploy"
- default     = "PoC"
+  type        = string
+  description = "Name of the VPC to deploy"
+  default     = "PoC"
 }
 
 variable "vpc_cidr" {
- type        = string
- description = "CIDR of the VPC to create. Please use a /16 mask for high compatibility with this module."
- default     = "10.50.0.0/16"
+  type        = string
+  description = "CIDR of the VPC to create. Please use a /16 mask for high compatibility with this module."
+  default     = "10.50.0.0/16"
 }
 
 ########################################
 ##### BACKEND
 ########################################
 variable "backend_subdomain" {
- type        = string
- description = "Subdomain where the API Gateway will be exposed, i.e. https://{backend_subdomain}/{domain}"
- default     = "api"
+  type        = string
+  description = "Subdomain where the API Gateway will be exposed, i.e. https://{backend_subdomain}/{domain}"
+  default     = "api"
 }
 
 variable "lambda_name" {
- type        = string
- description = "Name of the Lambda Function"
- default     = "backend-api"
+  type        = string
+  description = "Name of the Lambda Function"
+  default     = "backend-api"
 }
 
 variable "lambda_memory" {
- type        = number
- description = "Amount of memory that should be used in the Lambda"
- default     = 256
+  type        = number
+  description = "Amount of memory that should be used in the Lambda"
+  default     = 256
 }
 
 variable "lambda_architecture" {
- type        = string
- description = "Architecture that the Lambda function will run"
- default     = "arm64"
+  type        = string
+  description = "Architecture that the Lambda function will run"
+  default     = "arm64"
 
- validation {
- condition     = contains(["x86_64", "arm64"], var.lambda_architecture)
- error_message = "Valid values for var: test_variable are: 'x86_64' and 'arm64'."
- }
+  validation {
+    condition     = contains(["x86_64", "arm64"], var.lambda_architecture)
+    error_message = "Valid values for var: test_variable are: 'x86_64' and 'arm64'."
+  }
 }
 
 variable "lambda_timeout" {
- type        = number
- description = "Timeout in seconds of the Lambda"
- default     = 5
+  type        = number
+  description = "Timeout in seconds of the Lambda"
+  default     = 5
 }
 
 ########################################
 ##### DATABASE
 ########################################
 variable "table_name" {
- type        = string
- description = "Name of the DynamoDB table"
- default     = "table"
+  type        = string
+  description = "Name of the DynamoDB table"
+  default     = "table"
 }
 
 variable "table_attributes" {
- type        = list(map(string))
- description = "Attributes of the DynamoDB table"
- default = [
- {
- name = "UserId",
- type = "S",
- },
- ]
+  type        = list(map(string))
+  description = "Attributes of the DynamoDB table"
+  default = [
+    {
+      name = "UserId",
+      type = "S",
+    },
+  ]
 }
 
 variable "table_hash_key" {
- type        = string
- description = "Hash key of the DynamodDB table"
- default     = "UserId"
+  type        = string
+  description = "Hash key of the DynamodDB table"
+  default     = "UserId"
 }
 
 ########################################
 ##### FRONTEND
 ########################################
 variable "frontend_subdomain" {
- type        = string
- description = "Subdomain that the Website will be exposed, i.e. https://{frontend_subdomain}/{domain}"
- default     = "app"
+  type        = string
+  description = "Subdomain that the Website will be exposed, i.e. https://{frontend_subdomain}/{domain}"
+  default     = "app"
 }
 
 variable "frontend_bucket_name" {
- type        = string
- description = "Name of the S3 bucket that will contains the frontend website"
+  type        = string
+  description = "Name of the S3 bucket that will contains the frontend website"
 }
 ```
 
@@ -259,12 +259,12 @@ Now, let's check some "helper" files (data sources and locals).
 ```hcl
 # locals.tf
 locals {
- vpc_id          = var.vpc_deploy == true ? module.vpc[0].vpc_id : var.vpc_id
- vpc_ip          = cidrhost(var.vpc_cidr, 0)
- all_subnets     = [for i in range(4) : cidrsubnet(var.vpc_cidr, 8, i + 1)]
- public_subnets  = slice(local.all_subnets, 0, 2)
- private_subnets = slice(local.all_subnets, 2, 4)
- account_id      = data.aws_caller_identity.current.account_id
+  vpc_id          = var.vpc_deploy == true ? module.vpc[0].vpc_id : var.vpc_id
+  vpc_ip          = cidrhost(var.vpc_cidr, 0)
+  all_subnets     = [for i in range(4) : cidrsubnet(var.vpc_cidr, 8, i + 1)]
+  public_subnets  = slice(local.all_subnets, 0, 2)
+  private_subnets = slice(local.all_subnets, 2, 4)
+  account_id      = data.aws_caller_identity.current.account_id
 }
 ```
 
@@ -273,7 +273,7 @@ locals {
 data "aws_caller_identity" "current" {}
 
 data "aws_route53_zone" "this" {
- name = var.domain
+  name = var.domain
 }
 ```
 
@@ -286,236 +286,236 @@ And finally, let's check the main code.
 ##### NETWORKING
 ########################################
 module "vpc" {
- count = var.vpc_deploy == true ? 1 : 0
+  count = var.vpc_deploy == true ? 1 : 0
 
- source  = "terraform-aws-modules/vpc/aws"
- version = "5.15.0"
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.15.0"
 
- name = var.vpc_name
- cidr = var.vpc_cidr
+  name = var.vpc_name
+  cidr = var.vpc_cidr
 
- azs             = ["${var.aws_region}a", "${var.aws_region}b"]
- private_subnets = local.private_subnets
- public_subnets  = local.public_subnets
+  azs             = ["${var.aws_region}a", "${var.aws_region}b"]
+  private_subnets = local.private_subnets
+  public_subnets  = local.public_subnets
 }
 
 ########################################
 ##### DATABASE
 ########################################
 module "dynamodb-table" {
- source  = "terraform-aws-modules/dynamodb-table/aws"
- version = "4.2.0"
+  source  = "terraform-aws-modules/dynamodb-table/aws"
+  version = "4.2.0"
 
- name         = var.table_name
- attributes   = var.table_attributes
- hash_key     = var.table_hash_key
- billing_mode = "PAY_PER_REQUEST"
+  name         = var.table_name
+  attributes   = var.table_attributes
+  hash_key     = var.table_hash_key
+  billing_mode = "PAY_PER_REQUEST"
 }
 
 ########################################
 ##### BACKEND
 ########################################
 module "ecr" {
- source  = "terraform-aws-modules/ecr/aws"
- version = "2.3.0"
+  source  = "terraform-aws-modules/ecr/aws"
+  version = "2.3.0"
 
- repository_name                 = "backend-api"
- repository_image_tag_mutability = "MUTABLE"
- repository_image_scan_on_push   = false
- create_lifecycle_policy         = false
+  repository_name                 = "backend-api"
+  repository_image_tag_mutability = "MUTABLE"
+  repository_image_scan_on_push   = false
+  create_lifecycle_policy         = false
 }
 
 
 module "lambda_function" {
- source  = "terraform-aws-modules/lambda/aws"
- version = "7.14.0"
+  source  = "terraform-aws-modules/lambda/aws"
+  version = "7.14.0"
 
- function_name                     = var.lambda_name
- description                       = "Lambda Function based API serving as backend for the app"
- create_package                    = false
- architectures                     = [var.lambda_architecture]
- image_uri                         = "${module.ecr.repository_url}:latest"
- package_type                      = "Image"
- cloudwatch_logs_retention_in_days = var.logs_retention
+  function_name                     = var.lambda_name
+  description                       = "Lambda Function based API serving as backend for the app"
+  create_package                    = false
+  architectures                     = [var.lambda_architecture]
+  image_uri                         = "${module.ecr.repository_url}:latest"
+  package_type                      = "Image"
+  cloudwatch_logs_retention_in_days = var.logs_retention
 
- attach_network_policy = true
- vpc_subnet_ids        = module.vpc[0].private_subnets
+  attach_network_policy = true
+  vpc_subnet_ids        = module.vpc[0].private_subnets
 
- memory_size = var.lambda_memory
- timeout     = var.lambda_timeout
- environment_variables = {
- TABLE_NAME        = var.table_name
- FRONTEND_ENDPOINT = "https://${var.frontend_subdomain}.${var.domain}"
- }
+  memory_size = var.lambda_memory
+  timeout     = var.lambda_timeout
+  environment_variables = {
+    TABLE_NAME        = var.table_name
+    FRONTEND_ENDPOINT = "https://${var.frontend_subdomain}.${var.domain}"
+  }
 
- create_current_version_allowed_triggers = false
- allowed_triggers = {
- ApiGateway = {
- service    = "apigateway",
- source_arn = "arn:aws:execute-api:${var.aws_region}:${local.account_id}:${module.api_gateway.api_id}/*/*"
- }
- }
+  create_current_version_allowed_triggers = false
+  allowed_triggers = {
+    ApiGateway = {
+      service    = "apigateway",
+      source_arn = "arn:aws:execute-api:${var.aws_region}:${local.account_id}:${module.api_gateway.api_id}/*/*"
+    }
+  }
 
- attach_policy_json = true
- policy_json = jsonencode({
- Version = "2012-10-17"
- Statement = [
- {
- Action = [
- "dynamodb:Batch*",
- "dynamodb:GetItem",
- "dynamodb:PutItem",
- "dynamodb:UpdateItem",
- "dynamodb:Query",
- "dynamodb:Scan",
- ]
- Effect   = "Allow"
- Resource = "${module.dynamodb-table.dynamodb_table_arn}"
- },
- ]
- })
+  attach_policy_json = true
+  policy_json = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "dynamodb:Batch*",
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:Query",
+          "dynamodb:Scan",
+        ]
+        Effect   = "Allow"
+        Resource = "${module.dynamodb-table.dynamodb_table_arn}"
+      },
+    ]
+  })
 }
 
 module "api_gateway" {
- source  = "terraform-aws-modules/apigateway-v2/aws"
- version = "5.2.0"
+  source  = "terraform-aws-modules/apigateway-v2/aws"
+  version = "5.2.0"
 
- name             = "backend-gateway"
- description      = "HTTP API Gateway for the Lambda-based API"
- protocol_type    = "HTTP"
- domain_name      = "${var.backend_subdomain}.${var.domain}"
- hosted_zone_name = var.domain
- subdomains       = [var.backend_subdomain]
+  name             = "backend-gateway"
+  description      = "HTTP API Gateway for the Lambda-based API"
+  protocol_type    = "HTTP"
+  domain_name      = "${var.backend_subdomain}.${var.domain}"
+  hosted_zone_name = var.domain
+  subdomains       = [var.backend_subdomain]
 
- cors_configuration = {
- allow_headers = ["*"]
- allow_methods = ["*"]
- allow_origins = ["https://${var.frontend_subdomain}.${var.domain}"]
- }
+  cors_configuration = {
+    allow_headers = ["*"]
+    allow_methods = ["*"]
+    allow_origins = ["https://${var.frontend_subdomain}.${var.domain}"]
+  }
 
- routes = {
- "$default" = {
- integration = {
- uri                    = "arn:aws:lambda:${var.aws_region}:${local.account_id}:function:${var.lambda_name}" // module.lambda_function.lambda_function_arn
- payload_format_version = "2.0"
- }
- }
- }
+  routes = {
+    "$default" = {
+      integration = {
+        uri                    = "arn:aws:lambda:${var.aws_region}:${local.account_id}:function:${var.lambda_name}" // module.lambda_function.lambda_function_arn
+        payload_format_version = "2.0"
+      }
+    }
+  }
 }
 
 ########################################
 ##### FRONTEND
 ########################################
 module "s3_bucket" {
- source  = "terraform-aws-modules/s3-bucket/aws"
- version = "4.2.2"
+  source  = "terraform-aws-modules/s3-bucket/aws"
+  version = "4.2.2"
 
- bucket = var.frontend_bucket_name
+  bucket = var.frontend_bucket_name
 
- attach_policy = true
- policy = jsonencode({
- "Version" : "2008-10-17",
- "Id" : "PolicyForCloudFrontPrivateContent",
- "Statement" : [
- {
- "Sid" : "AllowCloudFrontServicePrincipal",
- "Effect" : "Allow",
- "Principal" : {
- "Service" : "cloudfront.amazonaws.com"
- },
- "Action" : "s3:GetObject",
- "Resource" : "arn:aws:s3:::${var.frontend_bucket_name}/*",
- "Condition" : {
- "StringEquals" : {
- "AWS:SourceArn" : "arn:aws:cloudfront::${local.account_id}:distribution/${module.cdn.cloudfront_distribution_id}"
- }
- }
- }
- ]
- })
+  attach_policy = true
+  policy = jsonencode({
+    "Version" : "2008-10-17",
+    "Id" : "PolicyForCloudFrontPrivateContent",
+    "Statement" : [
+      {
+        "Sid" : "AllowCloudFrontServicePrincipal",
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "cloudfront.amazonaws.com"
+        },
+        "Action" : "s3:GetObject",
+        "Resource" : "arn:aws:s3:::${var.frontend_bucket_name}/*",
+        "Condition" : {
+          "StringEquals" : {
+            "AWS:SourceArn" : "arn:aws:cloudfront::${local.account_id}:distribution/${module.cdn.cloudfront_distribution_id}"
+          }
+        }
+      }
+    ]
+  })
 
- providers = {
- aws = aws.us_east_1
- }
+  providers = {
+    aws = aws.us_east_1
+  }
 }
 
 module "acm" {
- source  = "terraform-aws-modules/acm/aws"
- version = "5.1.1"
+  source  = "terraform-aws-modules/acm/aws"
+  version = "5.1.1"
 
- domain_name       = var.domain
- validation_method = "DNS"
- zone_id           = data.aws_route53_zone.this.id
+  domain_name       = var.domain
+  validation_method = "DNS"
+  zone_id           = data.aws_route53_zone.this.id
 
- subject_alternative_names = [
- "${var.frontend_subdomain}.${var.domain}",
- ]
- wait_for_validation = true
+  subject_alternative_names = [
+    "${var.frontend_subdomain}.${var.domain}",
+  ]
+  wait_for_validation = true
 
- providers = {
- aws = aws.us_east_1
- }
+  providers = {
+    aws = aws.us_east_1
+  }
 }
 
 module "cdn" {
- source  = "terraform-aws-modules/cloudfront/aws"
- version = "3.4.1"
+  source  = "terraform-aws-modules/cloudfront/aws"
+  version = "3.4.1"
 
- aliases             = ["${var.frontend_subdomain}.${var.domain}"]
- comment             = "CDN of Frontend"
- price_class         = "PriceClass_All"
- is_ipv6_enabled     = true
- default_root_object = "index.html"
+  aliases             = ["${var.frontend_subdomain}.${var.domain}"]
+  comment             = "CDN of Frontend"
+  price_class         = "PriceClass_All"
+  is_ipv6_enabled     = true
+  default_root_object = "index.html"
 
- create_origin_access_control = true
- origin_access_control = {
- s3_bucket_frontend = {
- description      = "Frontend assets bucket"
- origin_type      = "s3"
- signing_behavior = "always",
- signing_protocol = "sigv4"
- }
- }
- origin = {
- s3 = {
- domain_name           = "${var.frontend_bucket_name}.s3.us-east-1.amazonaws.com"
- origin_access_control = "s3_bucket_frontend"
- }
- }
+  create_origin_access_control = true
+  origin_access_control = {
+    s3_bucket_frontend = {
+      description      = "Frontend assets bucket"
+      origin_type      = "s3"
+      signing_behavior = "always",
+      signing_protocol = "sigv4"
+    }
+  }
+  origin = {
+    s3 = {
+      domain_name           = "${var.frontend_bucket_name}.s3.us-east-1.amazonaws.com"
+      origin_access_control = "s3_bucket_frontend"
+    }
+  }
 
- default_cache_behavior = {
- target_origin_id       = "s3"
- viewer_protocol_policy = "redirect-to-https"
- allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
- cached_methods         = ["GET", "HEAD"]
- cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6" # CachingOptimized - Recommended for S3
- use_forwarded_values   = false
- compress               = true
- }
+  default_cache_behavior = {
+    target_origin_id       = "s3"
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods         = ["GET", "HEAD"]
+    cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6" # CachingOptimized - Recommended for S3
+    use_forwarded_values   = false
+    compress               = true
+  }
 
- viewer_certificate = {
- acm_certificate_arn      = module.acm.acm_certificate_arn
- ssl_support_method       = "sni-only"
- minimum_protocol_version = "TLSv1.2_2021"
- }
+  viewer_certificate = {
+    acm_certificate_arn      = module.acm.acm_certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
+  }
 }
 
 module "records" {
- source  = "terraform-aws-modules/route53/aws//modules/records"
- version = "4.1.0"
+  source  = "terraform-aws-modules/route53/aws//modules/records"
+  version = "4.1.0"
 
- zone_name = data.aws_route53_zone.this.name
+  zone_name = data.aws_route53_zone.this.name
 
- records = [
- {
- name = "${var.frontend_subdomain}"
- type = "A"
- alias = {
- name    = module.cdn.cloudfront_distribution_domain_name
- zone_id = module.cdn.cloudfront_distribution_hosted_zone_id
- }
- }
- ]
+  records = [
+    {
+      name = "${var.frontend_subdomain}"
+      type = "A"
+      alias = {
+        name    = module.cdn.cloudfront_distribution_domain_name
+        zone_id = module.cdn.cloudfront_distribution_hosted_zone_id
+      }
+    }
+  ]
 }
 ```
 
