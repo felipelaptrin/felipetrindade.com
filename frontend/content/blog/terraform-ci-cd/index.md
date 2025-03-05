@@ -1,6 +1,6 @@
 ---
 title: Terraform CI/CD with GitHub Actions and pre-commit
-date: "2025-04-02T12:55:32.169Z"
+date: "2025-03-05T12:55:32.169Z"
 description: Let's create a pipeline to ensure quality, security, code standard, and automatic deployment with GitHub Actions
 ---
 
