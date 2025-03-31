@@ -1,6 +1,6 @@
 ---
 title: Load test your ECS deployment
-date: "2025-03-01T12:05:32.169Z"
+date: "2025-04-01T12:05:32.169Z"
 description: Let's deploy an API in ECS services using AWS CDK with Typescript and load test it using Locust
 ---
 
