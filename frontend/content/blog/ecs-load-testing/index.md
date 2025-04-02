@@ -596,7 +596,7 @@ Notice how this metric was triggered several times! As you expect the policy to 
 
 ![Alarm of CloudWatch Max CPU to scale down](./assets/cpu-max-scale-down.png)
 
-You might be wondering why the alarms were not triggered when the CPU reached 40% immediately. Well, the reason for that is that it takes a take for ECS to send the metrics, CloudWatch to evaluate and EventBridge trigger the scale up.
+You might be wondering why the alarms were not triggered when the CPU reached 40% immediately. Well, the reason for that is that it takes time for ECS to send the metrics, CloudWatch to evaluate and EventBridge trigger the scale up.
 
 ![Investigate CPU Max Scale Up](./assets/investigate-cpu-max-scale-up.png)
 
