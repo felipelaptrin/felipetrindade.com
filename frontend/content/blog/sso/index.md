@@ -4,7 +4,7 @@ date: "2025-05-03T10:40:32.169Z"
 description: Are you having a hard time trying to set up and understand SSO using SAML and OIDC? Not anymore!
 ---
 
-It's been a while since I wanted to write this blog post! I do not intend to follow best practices to deploy Authentik or be extremely detailed about how SAML/OIDC works in depth but I will give you a good overview and flows to explain how it works. The idea of this post is to explain how SAML/OAuth/OIDC works, and how to configure a SAML and OIDC application using Authentik. I highly recommend you check the [GitHub repository]() that contains the code used in the blog post!
+It's been a while since I wanted to write this blog post! I do not intend to follow best practices to deploy Authentik or be extremely detailed about how SAML/OIDC works in depth but I will give you a good overview and flows to explain how it works. The idea of this post is to explain how SAML/OAuth/OIDC works, and how to configure a SAML and OIDC application using Authentik. I highly recommend you check the [GitHub repository](https://github.com/felipelaptrin/sso) that contains the code used in the blog post!
 
 At the end of this blog post you should be able to create the following infrastructure:
 
