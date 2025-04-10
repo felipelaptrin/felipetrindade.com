@@ -1,0 +1,120 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36" version="26.1.1">
+  <diagram name="Page-1" id="2YBvvXClWsGukQMizWep">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="0rYxcgfipJoAu7dUKTon-61" value="User&lt;div&gt;(Browser)&lt;/div&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#FD971F;" vertex="1" parent="1">
+          <mxGeometry x="50" y="120" width="100" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-62" value="Service Provider&lt;div&gt;(SP)&lt;/div&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#FD971F;" vertex="1" parent="1">
+          <mxGeometry x="270" y="120" width="100" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-63" value="Access IdP Portal" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="190" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="190" y="190" />
+            </Array>
+            <mxPoint x="530" y="190" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-64" value="Redirects to IdP panel" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="530" y="230" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="200" y="230" />
+            </Array>
+            <mxPoint x="110" y="230" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-65" value="Identity Provider&lt;div&gt;(IdP)&lt;/div&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;edgeStyle&quot;:&quot;elbowEdgeStyle&quot;,&quot;elbow&quot;:&quot;vertical&quot;,&quot;curved&quot;:0,&quot;rounded&quot;:0};fillColor=#FD971F;" vertex="1" parent="1">
+          <mxGeometry x="490" y="120" width="100" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-66" value="Clicks on the application (SP) icon" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry x="-0.0021" relative="1" as="geometry">
+            <mxPoint x="110" y="270.43000000000006" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="190" y="270.43000000000006" />
+            </Array>
+            <mxPoint x="530" y="270" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-67" value="Sends SAML response" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry x="0.0016" relative="1" as="geometry">
+            <mxPoint x="530" y="310" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="420" y="310" />
+            </Array>
+            <mxPoint x="110" y="310" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-68" value="Sends SAML Assertion" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="350" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="190" y="350" />
+            </Array>
+            <mxPoint x="310" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-69" value="" style="endArrow=classic;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;curved=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="326.01" y="350" as="sourcePoint" />
+            <mxPoint x="326" y="390" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="356" y="350" />
+              <mxPoint x="356" y="390" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-70" value="Log the user in" style="html=1;verticalAlign=bottom;endArrow=block;edgeStyle=elbowEdgeStyle;elbow=vertical;curved=0;rounded=0;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="310" y="390" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="200" y="390" />
+            </Array>
+            <mxPoint x="110" y="390" as="targetPoint" />
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-71" value="" style="endArrow=classic;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;curved=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="546.01" y="270" as="sourcePoint" />
+            <mxPoint x="546" y="310" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="576" y="270" />
+              <mxPoint x="576" y="310" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-72" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Validates&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;SAML assertion&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="347" y="350" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-73" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;font style=&quot;&quot;&gt;&lt;font style=&quot;&quot;&gt;&lt;font style=&quot;&quot;&gt;&lt;font style=&quot;&quot;&gt;IdP authenticates&lt;/font&gt;&lt;/font&gt;&lt;/font&gt;&lt;/font&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;the user&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="566" y="187" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-74" value="" style="endArrow=classic;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;curved=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="546.01" y="190" as="sourcePoint" />
+            <mxPoint x="546" y="230" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="576" y="190" />
+              <mxPoint x="576" y="230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-75" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;Generates&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;SAML assertion&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="566" y="270" width="90" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="0rYxcgfipJoAu7dUKTon-76" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;IdP-Initiated SAML Flow&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="180" y="40" width="280" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
