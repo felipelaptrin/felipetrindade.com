@@ -16,9 +16,6 @@ const Layout = ({ location, title, children }) => {
           <Link to="/about-me">About me</Link>
         </li>
         <li>
-          <Link to="/portfolio">Portfolio</Link>
-        </li>
-        <li>
           <Link to="/contact">Contact</Link>
         </li>
       </ul>
