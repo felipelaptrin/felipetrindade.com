@@ -80,7 +80,7 @@ Some important concepts in the flow:
 
 If you understand these concepts, you are ready to understand the OAuth 2.0 Authorization Code Flow below.
 
-![OAuth 2.0 Authentication Code Flow](./assets/OAuth%202.0.drawio.png)
+![OAuth 2.0 Authentication Code Flow](./assets/OAuth-2.0.drawio.png)
 
 As mentioned, OIDC is built on top of Auth 2.0, so it introduces new concepts/jargon that do not exist in OAuth 2.0 that are helpful when it comes to authentication:
 - **ID Token**: A signed JWT that contains information about the user (name, email, unique ID...) that is issued by the Authorization Server. The key-value pair inside the JWT that represent the user is called `claim`.
