@@ -70,7 +70,7 @@ Task is a modern approach to Makefiles written in Go. It supports a declarative 
 ```yaml
 version: '3'
 
-archors:
+anchors:
   check_aws_credentials: &check_aws_credentials
      sh: 'aws sts get-caller-identity'
      msg: "AWS credentials are not valid or are expired!"
