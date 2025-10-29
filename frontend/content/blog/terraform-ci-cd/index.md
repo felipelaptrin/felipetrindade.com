@@ -104,6 +104,7 @@ repos:
         args:
           - --hook-config=--parallelism-limit=1
           - --args=--severity HIGH,CRITICAL
+          - --args=--ignorefile=__GIT_WORKING_DIR__/.trivyignore
 ```
 
 The repository that contains the hooks is owned by Anton Babenko: a huge Terraform hero! Notice that our pre-commit uses all the tools mentioned previously.
