@@ -60,12 +60,13 @@ export class Frontend {
   }
 
   getS3Bucket(): s3.Bucket {
-    const bucket = new s3.Bucket(`${this.id}-bucket`, {
-      website: {
-        indexDocument: "index.html",
-        errorDocument: "index.html",
-      },
-    })
+    const bucket = new s3.Bucket(`${this.id}-bucket`, {})
+
+    new s3.BucketWebsiteConfiguration(`${this.id}-bucket-website`, {
+      bucket: bucket.id,
+      indexDocument: { suffix: "index.html" },
+      errorDocument: { key: "index.html" },
+    });
 
     return bucket
   }
