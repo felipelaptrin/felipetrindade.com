@@ -8,7 +8,7 @@ on:
 
 permissions:
   id-token: write # This is required for requesting the JWT
-  contents: read  # This is required for actions/checkout
+  contents: read # This is required for actions/checkout
 
 jobs:
   infra:
@@ -21,28 +21,23 @@ jobs:
       PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Install Dependencies using Mise
+        uses: jdx/mise-action@v3
+        with:
+          version: v2025.10.20
 
       - name: Assume Role via OIDC
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v5
         with:
           role-to-assume: ${{ vars.IAM_ROLE_ARN_OIDC_GITHUB }}
           role-session-name: Github-Actions
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 21.6.1
-
       - name: Install node dependencies
         working-directory: infrastructure
         run: npm install
-
-      - name: Pulumi installation
-        run: |
-          curl -fsSL https://get.pulumi.com | sh
-          export PATH=$PATH:/root/.pulumi/bin
 
       - name: Pulumi Login using S3 as backend
         run: pulumi login ${{ vars.PULUMI_BACKEND_S3_BUCKET }}

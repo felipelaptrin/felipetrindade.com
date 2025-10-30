@@ -1,6 +1,6 @@
-import { IFrontend } from './frontend'
-import { IGitHubOidc } from './oidc'
-import { IEmail } from './email'
+import { IFrontend } from './stacks/frontend'
+import { IGitHubOidc } from './stacks/oidc'
+import { IEmail } from './stacks/email'
 import { commonProps } from './commons'
 
 
