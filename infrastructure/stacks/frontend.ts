@@ -62,6 +62,14 @@ export class Frontend {
   getS3Bucket(): s3.Bucket {
     const bucket = new s3.Bucket(`${this.id}-bucket`, {})
 
+    new s3.BucketPublicAccessBlock(`${this.id}-bucket-access`, {
+      bucket: bucket.id,
+      blockPublicAcls: true,
+      blockPublicPolicy: true,
+      ignorePublicAcls: true,
+      restrictPublicBuckets: true,
+  });
+
     new s3.BucketWebsiteConfiguration(`${this.id}-bucket-website`, {
       bucket: bucket.id,
       indexDocument: { suffix: "index.html" },
