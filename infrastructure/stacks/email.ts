@@ -1,5 +1,5 @@
 import { route53 } from "@pulumi/aws"
-import { ICommonProps } from "./commons"
+import { ICommonProps } from "../commons"
 
 interface Record {
   type: "MX" | "TXT"

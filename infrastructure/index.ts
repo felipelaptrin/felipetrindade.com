@@ -1,7 +1,7 @@
-import { Frontend } from "./frontend"
+import { Frontend } from "./stacks/frontend"
 import { frontendConfig, githubOidcConfig, emailConfig } from "./config"
-import { GitHubOidc } from "./oidc"
-import { Email } from "./email"
+import { GitHubOidc } from "./stacks/oidc"
+import { Email } from "./stacks/email"
 
 new GitHubOidc("oidc", githubOidcConfig)
 const frontend = new Frontend("frontend", frontendConfig)

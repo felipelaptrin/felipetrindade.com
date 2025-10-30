@@ -1,7 +1,7 @@
 import * as archive from "@pulumi/archive";
 import { s3, acm, cloudfront, route53, lambda, iam, cloudwatch, Provider } from '@pulumi/aws'
 import { interpolate, asset } from '@pulumi/pulumi'
-import { ICommonProps } from "./commons"
+import { ICommonProps } from "../commons"
 
 export interface IFrontend {
   lambdaAtEdgeLogGroupRetention: number
@@ -60,12 +60,13 @@ export class Frontend {
   }
 
   getS3Bucket(): s3.Bucket {
-    const bucket = new s3.Bucket(`${this.id}-bucket`, {
-      website: {
-        indexDocument: "index.html",
-        errorDocument: "index.html",
-      },
-    })
+    const bucket = new s3.Bucket(`${this.id}-bucket`, {})
+
+    new s3.BucketWebsiteConfiguration(`${this.id}-bucket-website`, {
+      bucket: bucket.id,
+      indexDocument: { suffix: "index.html" },
+      errorDocument: { key: "index.html" },
+    });
 
     return bucket
   }
@@ -246,7 +247,7 @@ export class Frontend {
       description: "Runs at edge to add '/index.html' in every uri, allowing users to access paths",
       role: role.arn,
       code: new asset.FileArchive(archiveFile),
-      runtime: "nodejs20.x",
+      runtime: lambda.Runtime.NodeJS22dX,
       handler: "index.handler",
       architectures: ["x86_64"],
       publish: true,

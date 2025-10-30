@@ -1,5 +1,5 @@
 import { iam } from "@pulumi/aws"
-import { accountId } from "./commons"
+import { accountId } from "../commons"
 import { interpolate } from "@pulumi/pulumi"
 
 export interface IGitHubOidc {
