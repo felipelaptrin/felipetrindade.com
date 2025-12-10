@@ -54,6 +54,7 @@ But if you try to access the dev environment, the endpoint will not be there:
 
 ![Screenshot of the Dev Environment Random endpoint](./assets/dev-env-new-route.png)
 
+⚠️ Since I was using [fastapi](https://fastapi.tiangolo.com/) I could have taken a screenshot of the `/docs` page (Swagger UI) to show that the new endpoint exists on the ephemeral environment, right? Well... the issue is that the Swagger page makes a request to its own API to fetch the `openapi.json` file, and this request does not have the path prefix (i.e. `pr-4`), which uses the `dev` Lambda alias. In other words, the ephemeral environment won’t work for this specific use case. Maybe there’s some custom logic you could implement to fix this, but I couldn’t find a straightforward workaround.
 
 ## Code
 I don't think it will be beneficial to copy and paste code from the demo [GitHub Repository](https://github.com/felipelaptrin/ephemeral-environment-backend-serverless). So I recommend that you go over the code there and deploy it yourself!
