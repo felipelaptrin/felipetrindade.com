@@ -1,18 +1,18 @@
 ---
 title: Bridging the gap between IaC and GitOps
 date: "2026-01-05T11:45:32.169Z"
-description: Let’s deep dive into how you can connect Terraform and FluxCD!
+description: Let's deep dive into how you can connect Terraform and FluxCD!
 ---
 
 This blog post is a very special one for two main reasons:
 - It marks two full years of my blog posts! On average, I delivered one technical blog post per month (some months I posted two!).
-- This post tackles a real problem that I’ve faced for years, and never really liked how others addressed this issue… I’m really proud of the proposed solution that will be described here, and I’m pretty sure it has room for improvement, but it’s a good start.
+- This post tackles a real problem that I've faced for years, and never really liked how others addressed this issue… I'm really proud of the proposed solution that will be described here, and I'm pretty sure it has room for improvement, but it's a good start.
 
 As always, the entire code used in this post can be accessed in my [GitHub Repository](https://github.com/felipelaptrin/kubernetes-gitops-flux)
 
 ## Bridge the Gap between IaC and FluxCD
 
-Let’s explain a bit about the problem. Cloud resources are created with the IaC tool, and they need to be referenced in Kubernetes (e.g., Bucket name, Certificate ARN, Subnet IDs, SQS Queue ARN…). But how can these values be passed to the Kubernetes resources (e.g., Deployments, Helm Chart Values…)?
+Let's explain a bit about the problem. Cloud resources are created with the IaC tool, and they need to be referenced in Kubernetes (e.g., Bucket name, Certificate ARN, Subnet IDs, SQS Queue ARN…). But how can these values be passed to the Kubernetes resources (e.g., Deployments, Helm Chart Values…)?
 
 The "classic" solution for this is to store these in AWS Secrets Manager or Parameter Store and use External Secrets to create Kubernetes Secrets that will be consumed by your application as environment variables. The reality is that this pattern does not work in all cases, since it's very common the need to pass the value directly to a Helm Chart custom values, to manifests that do not support reading the value from a secret (e.g. ALB Controller needs VPC ID that is passed as `args` to the controller pod) or even in annotations/labels of resources.
 
@@ -70,7 +70,7 @@ When installing it first, I saw no errors.
 
 ## Addons/Apps installation
 
-I have a preference for installing external tools (i.e. tools that I don’t manage, such as open-source projects) using Helm Chart instead of managing each Kubernetes YAML Manifest individually (Deployment, PDB, Service, ConfigMap...). Because of that, I'll use the [HelmRelease](https://fluxcd.io/flux/components/helm/helmreleases/) Flux's Custom Resource to install these resources. But, there is always a need to manage some pure YAML manifests (e.g. `ExternalSecret`, `HttpRoute` - some Helm Charts only support Ingress...), for these, I will use the [Kustomization](https://fluxcd.io/flux/components/kustomize/kustomizations/) Flux's Custom Resource. Also, some of these addons need to install CRDs and the best practice is to install and manage these separately. The flow chart below explains the order of deployments I'd like FluxCD to run when creating a new cluster from scratch.
+I have a preference for installing external tools (i.e. tools that I don't manage, such as open-source projects) using Helm Chart instead of managing each Kubernetes YAML Manifest individually (Deployment, PDB, Service, ConfigMap...). Because of that, I'll use the [HelmRelease](https://fluxcd.io/flux/components/helm/helmreleases/) Flux's Custom Resource to install these resources. But, there is always a need to manage some pure YAML manifests (e.g. `ExternalSecret`, `HttpRoute` - some Helm Charts only support Ingress...), for these, I will use the [Kustomization](https://fluxcd.io/flux/components/kustomize/kustomizations/) Flux's Custom Resource. Also, some of these addons need to install CRDs and the best practice is to install and manage these separately. The flow chart below explains the order of deployments I'd like FluxCD to run when creating a new cluster from scratch.
 
 The following flow summarizes the main idea of how to Bridge the Gap between IaC and GitOps:
 
