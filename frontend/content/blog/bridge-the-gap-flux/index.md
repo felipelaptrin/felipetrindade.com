@@ -1,5 +1,5 @@
 ---
-title: Bridging the gap between IaC and GitOps
+title: Bridging the gap between IaC and GitOps with FluxCD and Terraform
 date: "2026-01-05T11:45:32.169Z"
 description: Let's deep dive into how you can connect Terraform and FluxCD!
 ---
